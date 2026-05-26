@@ -140,6 +140,22 @@ export interface TaskInit {
   description?: string;
   timeout?: number;
   id?: string;
+  createdAt?: Date;
+}
+
+// R-STORE-14: restore snapshot shape used by durable stores.
+export interface TaskSnapshot {
+  id: string;
+  type: TaskType;
+  title: string;
+  description: string;
+  payload: string;
+  timeout?: number;
+  createdAt: Date;
+  status: TaskStatus;
+  error?: string;
+  blockedBy?: string;
+  result?: TaskResult;
 }
 
 const ALLOWED_TRANSITIONS: Readonly<Record<TaskStatus, ReadonlySet<TaskStatus>>> = {
@@ -225,7 +241,7 @@ export class Task {
 
     this.#id = init.id ?? randomUUID();
     this.#type = type;
-    this.#createdAt = new Date();
+    this.#createdAt = init.createdAt ?? new Date();
     this.#title = init.title ?? '';
     this.#description = init.description ?? '';
     this.#payload = payload;
@@ -416,6 +432,23 @@ export class Task {
 
   public static agent(payload: string, init: TaskInit = {}): Task {
     return new Task(TaskType.AGENT, payload, init);
+  }
+
+  // R-STORE-13/14: bypasses the state machine to rebuild a Task from a
+  // durable snapshot. Only durable backends should call this.
+  public static restore(snapshot: TaskSnapshot): Task {
+    const t = new Task(snapshot.type, snapshot.payload, {
+      id: snapshot.id,
+      title: snapshot.title,
+      description: snapshot.description,
+      timeout: snapshot.timeout,
+      createdAt: snapshot.createdAt,
+    });
+    t.#status = snapshot.status;
+    t.#error = snapshot.error;
+    t.#blockedBy = snapshot.blockedBy;
+    t.#result = snapshot.result;
+    return t;
   }
 
   // --- Internals -----------------------------------------------------------

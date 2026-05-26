@@ -6,6 +6,20 @@ import { Task, TaskStatus } from './task.js';
 export interface TaskGraphInit {
   id?: string;
   title?: string;
+  createdAt?: Date;
+}
+
+// R-STORE-15: snapshot used to reconstruct a graph from a durable store.
+export interface TaskGraphSnapshot {
+  id: string;
+  title: string;
+  createdAt: Date;
+  entries: ReadonlyArray<{
+    task: Task;
+    after: ReadonlyArray<string>;
+    isFinally: boolean;
+    required: boolean;
+  }>;
 }
 
 export interface AddOptions {
@@ -64,7 +78,33 @@ export class TaskGraph {
     }
     this.id = init.id ?? randomUUID();
     this.#title = init.title ?? '';
-    this.createdAt = new Date();
+    this.createdAt = init.createdAt ?? new Date();
+  }
+
+  // R-STORE-15: rebuild a graph from a durable snapshot.
+  public static restore(snapshot: TaskGraphSnapshot): TaskGraph {
+    const g = new TaskGraph({
+      id: snapshot.id,
+      title: snapshot.title,
+      createdAt: snapshot.createdAt,
+    });
+    const byId = new Map<string, Task>();
+    for (const e of snapshot.entries) byId.set(e.task.id, e.task);
+    for (const e of snapshot.entries) {
+      const after = e.after.map((id) => {
+        const t = byId.get(id);
+        if (t === undefined) {
+          throw new Error(`restore: unknown dependency id ${id}`);
+        }
+        return t;
+      });
+      g.add(e.task, {
+        after,
+        finally_: e.isFinally,
+        required: e.required,
+      });
+    }
+    return g;
   }
 
   public get title(): string {

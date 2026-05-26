@@ -13,8 +13,8 @@ then commit.
 - Repository: <https://github.com/ianphil/ttasks-ts>
 - Package manager: `pnpm`
 - Compatibility docs: complete
-- Implementation: Phase 6 complete (built-in BASH and POWERSHELL subprocess handlers with streaming output, timeout, and cancellation)
-- Recommended next phase: **Phase 7 — Durable store**
+- Implementation: Phase 7 complete (durable SQLite store via `node:sqlite` with versioned schema, atomic graph save, opt-in destructive migration)
+- Recommended next phase: **Phase 8 — Copilot / agent integration**
 
 ## Daily resume checklist
 
@@ -448,7 +448,7 @@ git commit -m "Implement subprocess handlers (R-EXEC-28..31)"
 
 ### Phase 7 — Durable store
 
-Status: **not started**
+Status: **done**
 
 Implement a durable backend. SQLite is canonical but not mandatory.
 Recommended Node options:
