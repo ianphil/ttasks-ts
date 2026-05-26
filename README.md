@@ -74,7 +74,7 @@ pnpm build
 
 ## Status
 
-All porting phases complete. See [`docs/ROADMAP.md`](./docs/ROADMAP.md) and the rule-level specs in [`docs/compat/`](./docs/compat/) for the authoritative behavioral contract.
+All porting phases complete. See [`docs/compat/ROADMAP.md`](./docs/compat/ROADMAP.md) and the rule-level specs in [`docs/compat/`](./docs/compat/) for the authoritative behavioral contract.
 
 ## License
 

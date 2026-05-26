@@ -32,7 +32,7 @@ pnpm build
 Then open:
 
 ```text
-docs/ROADMAP.md
+docs/compat/ROADMAP.md
 docs/compat/conformance.md
 ```
 
