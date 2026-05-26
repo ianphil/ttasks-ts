@@ -3,8 +3,12 @@ import { describe, expect, it } from 'vitest';
 import { Task, TaskStatus, TaskType } from '../src/index.js';
 
 describe('Task construction and field rules', () => {
-  it('R-TASK-01 rejects unknown task type at construction', () => {
-    expect(() => new Task('not-a-type' as TaskType, 'echo hi')).toThrow();
+  it('R-TASK-01 rejects non-string or blank task type', () => {
+    expect(() => new Task('' as TaskType, 'echo hi')).toThrow(TypeError);
+    expect(() => new Task('   ' as TaskType, 'echo hi')).toThrow(TypeError);
+    expect(() => new Task(undefined as unknown as TaskType, 'echo hi')).toThrow(TypeError);
+    expect(() => new Task(null as unknown as TaskType, 'echo hi')).toThrow(TypeError);
+    expect(() => new Task(123 as unknown as TaskType, 'echo hi')).toThrow(TypeError);
   });
 
   it('R-TASK-01 accepts every built-in task type', () => {
@@ -12,6 +16,19 @@ describe('Task construction and field rules', () => {
       const t = new Task(type, 'payload');
       expect(t.type).toBe(type);
     }
+  });
+
+  it('R-TASK-01a accepts arbitrary non-empty string task types (open type)', () => {
+    const t = new Task('webhook', '{"url":"https://example.com"}');
+    expect(t.type).toBe('webhook');
+    const t2 = new Task('notification', '{"to":"user"}');
+    expect(t2.type).toBe('notification');
+  });
+
+  it('Task.custom builds tasks with custom kinds', () => {
+    const t = Task.custom('mcp-tool-call', '{}', { title: 'lookup' });
+    expect(t.type).toBe('mcp-tool-call');
+    expect(t.title).toBe('lookup');
   });
 
   it('R-TASK-02 rejects zero or negative timeouts at construction', () => {

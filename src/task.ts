@@ -10,15 +10,37 @@ export enum TaskStatus {
   BLOCKED = 'blocked',
 }
 
-/** @category Tasks */
-export enum TaskType {
-  BASH = 'bash',
-  POWERSHELL = 'powershell',
-  PROMPT = 'prompt',
-  AGENT = 'agent',
-}
+/**
+ * Built-in task kinds. The four constants below are the kinds the library
+ * ships handlers for, but `TaskType` is an OPEN type: consumers may pass any
+ * non-empty string (e.g. `'webhook'`, `'notification'`) and register a
+ * matching handler on the executor.
+ *
+ * The `(string & {})` trick on the type alias preserves autocomplete for the
+ * four built-ins while still accepting arbitrary strings without a cast.
+ *
+ * @category Tasks
+ */
+export const TaskType = {
+  BASH: 'bash',
+  POWERSHELL: 'powershell',
+  PROMPT: 'prompt',
+  AGENT: 'agent',
+} as const;
 
-const VALID_TASK_TYPES: ReadonlySet<string> = new Set(Object.values(TaskType));
+/** @category Tasks */
+export type BuiltinTaskType = (typeof TaskType)[keyof typeof TaskType];
+
+/** @category Tasks */
+export type TaskType = BuiltinTaskType | (string & {});
+
+function assertValidTaskType(type: unknown): asserts type is TaskType {
+  // R-TASK-01: type must be a non-empty, non-blank string. Any such string
+  // is a valid task type; the four built-ins above are advisory constants.
+  if (typeof type !== 'string' || type.trim().length === 0) {
+    throw new TypeError(`Invalid task type: ${String(type)}`);
+  }
+}
 
 /** @category Tasks */
 export type TerminationReason = null | 'exit_code' | 'timeout' | 'cancelled' | 'handler';
@@ -246,10 +268,8 @@ export class Task {
   #blockedBy: string | undefined;
 
   public constructor(type: TaskType, payload: string, init: TaskInit = {}) {
-    // R-TASK-01: validate type at construction
-    if (!VALID_TASK_TYPES.has(type as string)) {
-      throw new TypeError(`Unknown task type: ${String(type)}`);
-    }
+    // R-TASK-01: validate type at construction (non-empty, non-blank string).
+    assertValidTaskType(type);
     validateTimeout(init.timeout);
 
     this.#id = init.id ?? randomUUID();
@@ -445,6 +465,17 @@ export class Task {
 
   public static agent(payload: string, init: TaskInit = {}): Task {
     return new Task(TaskType.AGENT, payload, init);
+  }
+
+  /**
+   * Build a Task with a custom (consumer-defined) task type. The executor
+   * must have a handler registered for `type` for the task to run. See
+   * `executor.register(type, handler)`.
+   *
+   * @category Tasks
+   */
+  public static custom(type: TaskType, payload: string, init: TaskInit = {}): Task {
+    return new Task(type, payload, init);
   }
 
   // R-STORE-13/14: bypasses the state machine to rebuild a Task from a

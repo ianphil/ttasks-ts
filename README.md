@@ -9,9 +9,9 @@ TypeScript port of [`ttasks`](https://github.com/ianphil/ttasks). Built for Node
 Anonymous git install — no GitHub token, no registry config:
 
 ```bash
-pnpm add github:ianphil/ttasks-ts#v0.1.1
-# or: npm install github:ianphil/ttasks-ts#v0.1.1
-# or: yarn add github:ianphil/ttasks-ts#v0.1.1
+pnpm add github:ianphil/ttasks-ts#v0.2.0
+# or: npm install github:ianphil/ttasks-ts#v0.2.0
+# or: yarn add github:ianphil/ttasks-ts#v0.2.0
 ```
 
 The tagged version builds itself on install (via a `prepare` script that
