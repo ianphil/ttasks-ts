@@ -118,7 +118,38 @@ documents, not by hand-asserting against this index.
 
 ### Graph (`graph.md`)
 
-_Pending._
+| ID          | Level  | Summary                                                       | Notes |
+| ----------- | ------ | ------------------------------------------------------------- | ----- |
+| R-GRAPH-01  | MUST   | Graph has a stable identity                                   |       |
+| R-GRAPH-02  | MUST   | Title is an optional string                                   |       |
+| R-GRAPH-03  | MUST   | `createdAt` is set at construction                            |       |
+| R-GRAPH-04  | MUST   | `add` requires a Task                                         |       |
+| R-GRAPH-05  | MUST   | `add` deduplicates dependencies                               |       |
+| R-GRAPH-06  | MUST   | `finally_` and `required` flags are validated                 |       |
+| R-GRAPH-07  | SHOULD | `__setitem__` is a sugar form of `add`                        |       |
+| R-GRAPH-08  | MUST   | `dependencies` returns direct upstream tasks                  |       |
+| R-GRAPH-09  | MUST   | `roots` and `leaves`                                          |       |
+| R-GRAPH-10  | MUST   | `run` validates max workers                                   |       |
+| R-GRAPH-11  | MUST   | `run` rejects unregistered dependencies                       |       |
+| R-GRAPH-12  | MUST   | `run` rejects cycles                                          |       |
+| R-GRAPH-13  | MUST   | `run` rejects stale RUNNING tasks                             |       |
+| R-GRAPH-14  | MUST   | Normal tasks ready when all parents SUCCEEDED                 |       |
+| R-GRAPH-15  | MUST   | Finally tasks ready when all parents inactive                 |       |
+| R-GRAPH-16  | MUST   | Bad parent blocks normal descendants                          |       |
+| R-GRAPH-17  | MUST   | Blocking does not propagate through finally tasks             |       |
+| R-GRAPH-18  | MUST   | Independent branches are unaffected                           |       |
+| R-GRAPH-19  | MUST   | Failure terminates the run promptly                           |       |
+| R-GRAPH-20  | MUST   | Parallelism is bounded by `maxWorkers`                        |       |
+| R-GRAPH-21  | MUST   | Already-SUCCEEDED tasks count as satisfied dependencies       |       |
+| R-GRAPH-22  | MUST   | Carryover-blocked tasks are retry-eligible                    |       |
+| R-GRAPH-23  | MUST   | Blocked view resets at start of run                           |       |
+| R-GRAPH-24  | MUST   | Graph passes direct upstream task refs to handlers            |       |
+| R-GRAPH-25  | MUST   | Status views reflect graph members only                       |       |
+| R-GRAPH-26  | MUST   | `errors` records executor-thrown errors per task              |       |
+| R-GRAPH-27  | MUST   | `ok` is the authoritative verdict                             |       |
+| R-GRAPH-28  | MUST   | Graph is persisted before and after run                       |       |
+| R-GRAPH-29  | MUST   | `run` returns the graph for chaining                          |       |
+| R-GRAPH-30  | MUST   | Empty graph runs cleanly                                      |       |
 
 ### Store (`store.md`)
 
