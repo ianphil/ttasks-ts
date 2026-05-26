@@ -10,7 +10,7 @@ They are regular tasks with special readiness rules inside `TaskGraph`.
 ## Basic form
 
 ```ts
-import { Task, TaskGraph } from 'ttasks-ts';
+import { Task, TaskGraph } from '@ianphil/ttasks-ts';
 
 const lint   = Task.bash('eslint .',                { title: 'Lint' });
 const test   = Task.bash('vitest run',              { title: 'Tests' });

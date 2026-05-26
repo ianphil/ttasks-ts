@@ -7,7 +7,7 @@ gives you two handler factories and one long-lived session class on top of it.
 ## The provider seam
 
 ```ts
-import type { CopilotProvider } from 'ttasks-ts';
+import type { CopilotProvider } from '@ianphil/ttasks-ts';
 
 const provider: CopilotProvider = {
   async createSession(opts) {
@@ -31,7 +31,7 @@ you configure a responder, and honors `AbortSignal`.
 and closes the session. Default model is `gpt-5-mini`, default timeout is 60s.
 
 ```ts
-import { Task, TaskExecutor, TaskType, makeCopilotPromptHandler } from 'ttasks-ts';
+import { Task, TaskExecutor, TaskType, makeCopilotPromptHandler } from '@ianphil/ttasks-ts';
 
 const exec = new TaskExecutor();
 exec.register(TaskType.PROMPT, makeCopilotPromptHandler({ provider }));
@@ -46,7 +46,7 @@ console.log(result.output);
 closes the session. Default model is `gpt-5`, no default timeout.
 
 ```ts
-import { makeCopilotAgentHandler } from 'ttasks-ts';
+import { makeCopilotAgentHandler } from '@ianphil/ttasks-ts';
 exec.register(TaskType.AGENT, makeCopilotAgentHandler({ provider }));
 
 await exec.execute(Task.agent('Run the test suite and report results.'));
@@ -58,7 +58,7 @@ When several `Task.agent(...)` tasks should share one conversation, use
 `CopilotAgentSession`:
 
 ```ts
-import { CopilotAgentSession, Task, TaskExecutor, TaskType } from 'ttasks-ts';
+import { CopilotAgentSession, Task, TaskExecutor, TaskType } from '@ianphil/ttasks-ts';
 
 const session = new CopilotAgentSession({
   provider,

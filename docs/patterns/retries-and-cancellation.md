@@ -5,7 +5,7 @@
 Single-task retries are opt-in with `RetryPolicy`.
 
 ```ts
-import { RetryPolicy, Task, TaskExecutor } from 'ttasks-ts';
+import { RetryPolicy, Task, TaskExecutor } from '@ianphil/ttasks-ts';
 
 const executor = new TaskExecutor();
 const task = Task.bash('./flaky-command', { title: 'Flaky command' });

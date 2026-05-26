@@ -6,8 +6,17 @@ TypeScript port of [`ttasks`](https://github.com/ianphil/ttasks). Built for Node
 
 ## Install
 
+This package is published to the **GitHub Packages** npm registry. Add the following to a project-level `.npmrc` (the registry mapping is required for the `@ianphil` scope, and an authenticated PAT with `read:packages` is required even for public installs):
+
+```ini
+@ianphil:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
+```
+
+Then:
+
 ```bash
-pnpm add ttasks-ts
+pnpm add @ianphil/ttasks-ts
 ```
 
 Requires Node.js **≥ 24**.
@@ -15,7 +24,7 @@ Requires Node.js **≥ 24**.
 ## Hello world
 
 ```ts
-import { Task, TaskExecutor, TaskGraph, TaskType, SqliteStore, createBashHandler } from 'ttasks-ts';
+import { Task, TaskExecutor, TaskGraph, TaskType, SqliteStore, createBashHandler } from '@ianphil/ttasks-ts';
 
 const store = new SqliteStore({ path: 'tasks.db' });
 const exec = new TaskExecutor({ store });
@@ -46,7 +55,7 @@ console.log(greet.result!.output.trim()); // "hello world!"
 ## Copilot quick taste
 
 ```ts
-import { CopilotAgentSession, makeCopilotPromptHandler, TaskType, Task, TaskExecutor } from 'ttasks-ts';
+import { CopilotAgentSession, makeCopilotPromptHandler, TaskType, Task, TaskExecutor } from '@ianphil/ttasks-ts';
 
 // One-shot prompt
 const exec = new TaskExecutor();

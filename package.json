@@ -1,17 +1,22 @@
 {
-  "name": "ttasks-ts",
+  "name": "@ianphil/ttasks-ts",
   "version": "0.1.0",
   "description": "TypeScript port of ttasks",
   "license": "MIT",
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ianphil/ttasks-ts.git"
+    "url": "git+https://github.com/ianphil/ttasks-ts.git"
   },
   "bugs": {
     "url": "https://github.com/ianphil/ttasks-ts/issues"
   },
   "homepage": "https://github.com/ianphil/ttasks-ts#readme",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "public",
+    "provenance": true
+  },
   "packageManager": "pnpm@11.3.0",
   "engines": {
     "node": ">=24"
@@ -25,7 +30,9 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
@@ -42,3 +49,4 @@
     "vitest": "^3.2.4"
   }
 }
+

@@ -4,8 +4,8 @@
 registered in the graph before `run()`.
 
 ```ts
-import { Task, TaskExecutor, TaskGraph, TaskType } from 'ttasks-ts';
-import { createBashHandler } from 'ttasks-ts';
+import { Task, TaskExecutor, TaskGraph, TaskType } from '@ianphil/ttasks-ts';
+import { createBashHandler } from '@ianphil/ttasks-ts';
 
 const build = Task.bash('echo build', { title: 'Build' });
 const test  = Task.bash('echo test',  { title: 'Test' });

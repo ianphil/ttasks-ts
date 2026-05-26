@@ -3,8 +3,8 @@
 ## Run one task
 
 ```ts
-import { Task, TaskExecutor, TaskType } from 'ttasks-ts';
-import { createBashHandler } from 'ttasks-ts';
+import { Task, TaskExecutor, TaskType } from '@ianphil/ttasks-ts';
+import { createBashHandler } from '@ianphil/ttasks-ts';
 
 const executor = new TaskExecutor();
 executor.register(TaskType.BASH, createBashHandler());
@@ -28,7 +28,7 @@ Every executor exposes an `EventBus` for lifecycle, progress, and output events.
 `subscribe(...)` returns an idempotent unsubscribe callable.
 
 ```ts
-import { TaskEvent, TaskExecutor } from 'ttasks-ts';
+import { TaskEvent, TaskExecutor } from '@ianphil/ttasks-ts';
 
 const executor = new TaskExecutor();
 const unsubscribe = executor.events.subscribe((event: TaskEvent) => {
@@ -58,7 +58,7 @@ import {
   Task,
   TaskExecutor,
   TaskType,
-} from 'ttasks-ts';
+} from '@ianphil/ttasks-ts';
 
 const session = new CopilotAgentSession({
   provider,
@@ -84,8 +84,8 @@ the [Copilot tutorial](tutorials/copilot.md).
 ## Run a graph
 
 ```ts
-import { Task, TaskExecutor, TaskGraph, TaskType } from 'ttasks-ts';
-import { createBashHandler } from 'ttasks-ts';
+import { Task, TaskExecutor, TaskGraph, TaskType } from '@ianphil/ttasks-ts';
+import { createBashHandler } from '@ianphil/ttasks-ts';
 
 const build   = Task.bash('echo build',   { title: 'Build' });
 const test    = Task.bash('echo test',    { title: 'Test' });
@@ -122,8 +122,8 @@ import {
   TaskExecutor,
   TaskGraph,
   TaskType,
-} from 'ttasks-ts';
-import { createBashHandler } from 'ttasks-ts';
+} from '@ianphil/ttasks-ts';
+import { createBashHandler } from '@ianphil/ttasks-ts';
 
 const store = new SqliteStore({ path: 'ttasks.db' });
 const exec = new TaskExecutor({ store });

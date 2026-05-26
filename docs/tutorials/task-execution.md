@@ -5,7 +5,7 @@
 A `Task` is the unit of work tracked by ttasks-ts.
 
 ```ts
-import { Task } from 'ttasks-ts';
+import { Task } from '@ianphil/ttasks-ts';
 
 const task = Task.bash('ls -la', {
   title: 'List files',
@@ -45,7 +45,7 @@ stdout string.
 the Python library, no handlers are pre-registered — wire up only what you need.
 
 ```ts
-import { TaskExecutor, TaskType } from 'ttasks-ts';
+import { TaskExecutor, TaskType } from '@ianphil/ttasks-ts';
 
 const executor = new TaskExecutor();
 executor.register(TaskType.BASH, (ctx) => 'handled');
@@ -74,7 +74,7 @@ Prompt tasks send `Task.payload` to Copilot and store the assistant message text
 in `TaskResult.output`.
 
 ```ts
-import { Task, TaskExecutor, TaskType, makeCopilotPromptHandler } from 'ttasks-ts';
+import { Task, TaskExecutor, TaskType, makeCopilotPromptHandler } from '@ianphil/ttasks-ts';
 
 const executor = new TaskExecutor();
 executor.register(TaskType.PROMPT, makeCopilotPromptHandler({ provider }));
@@ -100,7 +100,7 @@ exposes two collections keyed by object ID:
 - `store.graphs`
 
 ```ts
-import { InMemoryStore, Task, TaskGraph } from 'ttasks-ts';
+import { InMemoryStore, Task, TaskGraph } from '@ianphil/ttasks-ts';
 
 const store = new InMemoryStore();
 const task = Task.bash('echo hi', { title: 'hello' });

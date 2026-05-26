@@ -3,7 +3,7 @@
 Every executor has an `EventBus` for task lifecycle events.
 
 ```ts
-import { TaskEvent, TaskEventType } from 'ttasks-ts';
+import { TaskEvent, TaskEventType } from '@ianphil/ttasks-ts';
 
 const seen: TaskEvent[] = [];
 await executor.events.subscribeScoped(
