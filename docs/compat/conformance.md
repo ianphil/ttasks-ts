@@ -79,7 +79,42 @@ documents, not by hand-asserting against this index.
 
 ### Executor (`executor.md`)
 
-_Pending._
+| ID         | Level  | Summary                                                       | Notes |
+| ---------- | ------ | ------------------------------------------------------------- | ----- |
+| R-EXEC-01  | MUST   | Handler registration is type-keyed                            |       |
+| R-EXEC-02  | MUST   | `isRegistered` reflects registration state                    |       |
+| R-EXEC-03  | SHOULD | Default handlers for built-in types                           |       |
+| R-EXEC-04  | MUST   | `execute` requires a Task                                     |       |
+| R-EXEC-05  | MUST   | `execute` drives the canonical lifecycle                      |       |
+| R-EXEC-06  | MUST   | Missing handler terminalizes without RUNNING                  |       |
+| R-EXEC-07  | MUST   | `execute` refuses already-CANCELLED tasks                     |       |
+| R-EXEC-08  | MUST   | `execute` refuses non-runnable status                         |       |
+| R-EXEC-09  | MUST   | Context exposes read-only task view                           |       |
+| R-EXEC-10  | MUST   | Context exposes upstream tasks read-only                      |       |
+| R-EXEC-11  | MUST   | Progress requires an executor-bound emitter                   |       |
+| R-EXEC-12  | MUST   | Progress is rejected after cancellation                       |       |
+| R-EXEC-13  | MUST   | `cancel` is the cancellation entry point                      |       |
+| R-EXEC-14  | MUST   | Cancelled-pending result fields                               |       |
+| R-EXEC-15  | MUST   | Cancel persists to the store                                  |       |
+| R-EXEC-16  | MUST   | RetryPolicy validation                                        |       |
+| R-EXEC-17  | MUST   | Retries re-run until success or exhaustion                    |       |
+| R-EXEC-18  | MUST   | Cancellation is never retried                                 |       |
+| R-EXEC-19  | MUST   | Missing handler does not retry                                |       |
+| R-EXEC-20  | MUST   | Backoff is observed between attempts                          |       |
+| R-EXEC-21  | MUST   | Cancellation during backoff is honored promptly               |       |
+| R-EXEC-22  | MUST   | `submit` returns a future-like                                |       |
+| R-EXEC-23  | MUST   | Submitted execution is consistent with synchronous            |       |
+| R-EXEC-24  | MUST   | Queued cancel before run                                      |       |
+| R-EXEC-25  | MUST   | Shutdown is idempotent and drains submitted work              |       |
+| R-EXEC-26  | MUST   | Shutdown from a worker is non-deadlocking                     |       |
+| R-EXEC-27  | SHOULD | Resource-cleanup integration                                  |       |
+| R-EXEC-28  | MUST   | Built-in shell handlers stream output                         |       |
+| R-EXEC-29  | MUST   | Timeout terminates the process and yields partial output      |       |
+| R-EXEC-30  | MUST   | Cancellation terminates the process                           |       |
+| R-EXEC-31  | SHOULD | Output decode is lossy-tolerant                               |       |
+| R-EXEC-32  | MUST   | `markBlocked` is the graph seam                               |       |
+| R-EXEC-33  | MUST   | Auto-persistence on every transition                          |       |
+| R-EXEC-34  | MUST   | Progress and output are not persisted                         |       |
 
 ### Graph (`graph.md`)
 
