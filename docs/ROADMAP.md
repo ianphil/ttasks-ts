@@ -13,8 +13,8 @@ then commit.
 - Repository: <https://github.com/ianphil/ttasks-ts>
 - Package manager: `pnpm`
 - Compatibility docs: complete
-- Implementation: Phase 2 complete (task model + event bus)
-- Recommended next phase: **Phase 3 — Executor core**
+- Implementation: Phase 3 complete (executor core, retries, cancel, submit, shutdown, persistence)
+- Recommended next phase: **Phase 4 — Persistence (full store + dehydrate/rehydrate)**
 
 ## Daily resume checklist
 

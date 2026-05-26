@@ -25,7 +25,9 @@ export class TaskGraph {
         task.transitionTo(TaskStatus.BLOCKED, { blockedBy: blocker.id });
         continue;
       }
-      await executor.execute(task, new Map(deps.map((dep) => [dep.id, dep])));
+      await executor.execute(task, {
+        upstream: new Map(deps.map((dep) => [dep.id, dep])),
+      });
     }
     return this;
   }
