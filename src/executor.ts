@@ -40,6 +40,31 @@ export class MissingHandlerError extends TaskExecutionError {
   }
 }
 
+// R-EXEC-28/29: subprocess handlers throw this when the process completes
+// with a non-zero exit code, times out, or is otherwise unsuccessful. It
+// carries the partial output so the executor can attach a normal TaskResult
+// to the FAILED task.
+export interface SubprocessCompletion {
+  stdout: string;
+  stderr: string;
+  returncode: number;
+}
+
+export class SubprocessFailureError extends TaskExecutionError {
+  public readonly completion: SubprocessCompletion;
+  public readonly terminationReason: 'exit_code' | 'timeout';
+  public constructor(
+    message: string,
+    completion: SubprocessCompletion,
+    terminationReason: 'exit_code' | 'timeout',
+  ) {
+    super(message);
+    this.name = 'SubprocessFailureError';
+    this.completion = completion;
+    this.terminationReason = terminationReason;
+  }
+}
+
 export class ExecutorShutdownError extends Error {
   public constructor(message = 'Executor has been shut down') {
     super(message);
@@ -114,6 +139,7 @@ export interface TaskContextInit {
   signal: AbortSignal;
   isCancelled: () => boolean;
   emitter?: (percent: number | undefined, message: string | undefined) => void;
+  outputEmitter?: (stream: 'stdout' | 'stderr', chunk: string) => void;
 }
 
 export class TaskContext {
@@ -124,6 +150,9 @@ export class TaskContext {
   readonly #emitter:
     | ((percent: number | undefined, message: string | undefined) => void)
     | undefined;
+  readonly #outputEmitter:
+    | ((stream: 'stdout' | 'stderr', chunk: string) => void)
+    | undefined;
 
   public constructor(init: TaskContextInit) {
     this.#task = init.task;
@@ -132,6 +161,7 @@ export class TaskContext {
     this.#signal = init.signal;
     this.#isCancelled = init.isCancelled;
     this.#emitter = init.emitter;
+    this.#outputEmitter = init.outputEmitter;
   }
 
   public get id(): string {
@@ -179,6 +209,14 @@ export class TaskContext {
     }
     if (this.#isCancelled()) throw new TaskCancelled();
     this.#emitter(percent, message);
+  }
+
+  // R-EXEC-28 / R-EVT-14: stream stdout or stderr chunks while a handler runs.
+  public emitOutput(stream: 'stdout' | 'stderr', chunk: string): void {
+    if (this.#outputEmitter === undefined) {
+      throw new Error('TaskContext.emitOutput requires an executor-bound emitter');
+    }
+    this.#outputEmitter(stream, chunk);
   }
 }
 
@@ -376,6 +414,11 @@ export class TaskExecutor {
       emitter: (percent, message) => {
         this.events.emit(TaskEvents.progress({ task, percent, message }));
       },
+      outputEmitter: (stream, chunk) => {
+        // R-EVT-14: empty chunks may be suppressed.
+        if (chunk.length === 0) return;
+        this.events.emit(TaskEvents.output({ task, stream, chunk }));
+      },
     });
 
     let raw: unknown;
@@ -407,13 +450,20 @@ export class TaskExecutor {
 
     if (thrown !== undefined) {
       const message = thrown instanceof Error ? thrown.message : String(thrown);
+      // R-EXEC-28: subprocess failures carry stdout/stderr/returncode to
+      // preserve them on the FAILED task's result. R-EXEC-29: timeouts use
+      // terminationReason='timeout' with whatever output was collected.
+      const isSubprocFailure = thrown instanceof SubprocessFailureError;
+      const subprocThrown = isSubprocFailure
+        ? (thrown as SubprocessFailureError)
+        : undefined;
       const result = normalizeTaskResult({
         taskId: task.id,
         status: TaskStatus.FAILED,
         startedAt,
         finishedAt,
-        raw: null,
-        terminationReason: 'handler',
+        raw: subprocThrown ? subprocThrown.completion : null,
+        terminationReason: subprocThrown ? subprocThrown.terminationReason : 'handler',
       });
       task.transitionTo(TaskStatus.FAILED, { error: message, result });
       this.events.emit(

@@ -13,8 +13,8 @@ then commit.
 - Repository: <https://github.com/ianphil/ttasks-ts>
 - Package manager: `pnpm`
 - Compatibility docs: complete
-- Implementation: Phase 5 complete (graph scheduler with cycle detection, bounded concurrency, finally tasks, and persistence)
-- Recommended next phase: **Phase 6 — Subprocess handlers (BASH / POWERSHELL)**
+- Implementation: Phase 6 complete (built-in BASH and POWERSHELL subprocess handlers with streaming output, timeout, and cancellation)
+- Recommended next phase: **Phase 7 — Durable store**
 
 ## Daily resume checklist
 
@@ -400,7 +400,7 @@ git commit -m "Implement graph scheduler (R-GRAPH-01..30)"
 
 ### Phase 6 — Node subprocess handlers
 
-Status: **not started**
+Status: **done**
 
 Implement:
 
