@@ -13,8 +13,8 @@ then commit.
 - Repository: <https://github.com/ianphil/ttasks-ts>
 - Package manager: `pnpm`
 - Compatibility docs: complete
-- Implementation: Phase 1 complete (task model + state machine)
-- Recommended next phase: **Phase 2 — Event system**
+- Implementation: Phase 2 complete (task model + event bus)
+- Recommended next phase: **Phase 3 — Executor core**
 
 ## Daily resume checklist
 
@@ -194,7 +194,7 @@ git commit -m "Implement task model and state machine (R-TASK-01..16, R-SM-01..1
 
 ### Phase 2 — Event system
 
-Status: **not started**
+Status: **done**
 
 Implement:
 

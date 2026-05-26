@@ -1,4 +1,4 @@
-import { EventBus, TaskEventType, type TaskEvent } from './events.js';
+import { EventBus, TaskEvents, type TaskEvent } from './events.js';
 import { Task, TaskStatus, normalizeTaskResult, type TaskResult, type TaskType } from './task.js';
 
 export class TaskExecutionError extends Error {}
@@ -32,14 +32,9 @@ export class TaskExecutor {
     const startedAt = new Date();
     const previousStatus = task.status;
     task.transitionTo(TaskStatus.RUNNING);
-    this.events.emit({
-      type: TaskEventType.STARTED,
-      task,
-      taskId: task.id,
-      timestamp: startedAt,
-      previousStatus,
-      status: TaskStatus.RUNNING,
-    });
+    this.events.emit(
+      TaskEvents.started({ task, previousStatus, timestamp: startedAt }),
+    );
 
     const handler = this.handlers.get(task.type);
     if (handler === undefined) {
@@ -54,15 +49,14 @@ export class TaskExecutor {
         terminationReason: 'handler',
       });
       task.transitionTo(TaskStatus.FAILED, { error, result });
-      this.events.emit({
-        type: TaskEventType.FAILED,
-        task,
-        taskId: task.id,
-        timestamp: finishedAt,
-        previousStatus: TaskStatus.RUNNING,
-        status: TaskStatus.FAILED,
-        error,
-      });
+      this.events.emit(
+        TaskEvents.failed({
+          task,
+          previousStatus: TaskStatus.RUNNING,
+          error,
+          timestamp: finishedAt,
+        }),
+      );
       throw new TaskExecutionError(error);
     }
 
@@ -77,14 +71,13 @@ export class TaskExecutor {
         raw,
       });
       task.transitionTo(TaskStatus.SUCCEEDED, { result });
-      this.events.emit({
-        type: TaskEventType.SUCCEEDED,
-        task,
-        taskId: task.id,
-        timestamp: finishedAt,
-        previousStatus: TaskStatus.RUNNING,
-        status: TaskStatus.SUCCEEDED,
-      });
+      this.events.emit(
+        TaskEvents.succeeded({
+          task,
+          previousStatus: TaskStatus.RUNNING,
+          timestamp: finishedAt,
+        }),
+      );
       return result;
     } catch (error) {
       const finishedAt = new Date();
@@ -98,15 +91,14 @@ export class TaskExecutor {
         terminationReason: 'handler',
       });
       task.transitionTo(TaskStatus.FAILED, { error: message, result });
-      this.events.emit({
-        type: TaskEventType.FAILED,
-        task,
-        taskId: task.id,
-        timestamp: finishedAt,
-        previousStatus: TaskStatus.RUNNING,
-        status: TaskStatus.FAILED,
-        error: message,
-      });
+      this.events.emit(
+        TaskEvents.failed({
+          task,
+          previousStatus: TaskStatus.RUNNING,
+          error: message,
+          timestamp: finishedAt,
+        }),
+      );
       throw error;
     }
   }
