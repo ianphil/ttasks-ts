@@ -51,6 +51,31 @@ const executor = new TaskExecutor();
 executor.register(TaskType.BASH, (ctx) => 'handled');
 ```
 
+### Custom task types
+
+`TaskType` is open: register any non-empty string as a custom task kind, and
+build matching tasks with `Task.custom`. Useful when modeling domain task
+vocabularies (`webhook`, `notification`, `mcp-tool-call`, …) on top of
+ttasks-ts without forking it.
+
+```ts
+import { Task, TaskExecutor } from '@ianphil/ttasks-ts';
+
+const executor = new TaskExecutor();
+executor.register('webhook', async (ctx) => {
+  const { url } = JSON.parse(ctx.payload);
+  const res = await fetch(url, { signal: ctx.signal });
+  return `status=${res.status}`;
+});
+
+const t = Task.custom('webhook', JSON.stringify({ url: 'https://example.com' }));
+await executor.execute(t);
+```
+
+Custom types persist through stores unchanged (the durable schema treats
+`type` as a free string), so a custom task survives crash + resume the same
+way a built-in does.
+
 Handler contract:
 
 - returning a value (or a `Promise` that resolves) means success

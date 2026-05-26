@@ -112,11 +112,11 @@ export class RetryPolicy {
   }
 }
 
-const VALID_TASK_TYPES: ReadonlySet<string> = new Set(Object.values(TaskType));
-
 function assertTaskType(value: unknown): asserts value is TaskType {
-  if (typeof value !== 'string' || !VALID_TASK_TYPES.has(value)) {
-    throw new TypeError(`Unknown task type: ${String(value)}`);
+  // R-EXEC-01: any non-empty, non-blank string is a valid task type. The
+  // executor decides whether a *handler* is registered separately.
+  if (typeof value !== 'string' || value.trim().length === 0) {
+    throw new TypeError(`Invalid task type: ${String(value)}`);
   }
 }
 

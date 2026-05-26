@@ -20,11 +20,19 @@ function record(executor: TaskExecutor): TaskEvent[] {
 }
 
 describe('TaskExecutor — registration', () => {
-  it('R-EXEC-01: register rejects unknown task type', () => {
+  it('R-EXEC-01: register rejects non-string or blank task type', () => {
     const exec = new TaskExecutor();
-    expect(() =>
-      exec.register('not-a-type' as TaskType, () => undefined),
-    ).toThrow(TypeError);
+    expect(() => exec.register('' as TaskType, () => undefined)).toThrow(TypeError);
+    expect(() => exec.register('   ' as TaskType, () => undefined)).toThrow(TypeError);
+    expect(() => exec.register(undefined as unknown as TaskType, () => undefined)).toThrow(
+      TypeError,
+    );
+  });
+
+  it('R-EXEC-01: register accepts custom (non-built-in) task types', () => {
+    const exec = new TaskExecutor();
+    exec.register('webhook', () => 'ok');
+    expect(exec.isRegistered('webhook')).toBe(true);
   });
 
   it('R-EXEC-01: register rejects non-callable handler', () => {
@@ -47,7 +55,8 @@ describe('TaskExecutor — registration', () => {
     expect(exec.isRegistered(TaskType.BASH)).toBe(false);
     exec.register(TaskType.BASH, () => 'ok');
     expect(exec.isRegistered(TaskType.BASH)).toBe(true);
-    expect(() => exec.isRegistered('bogus' as TaskType)).toThrow(TypeError);
+    // Unregistered custom types are valid but report false (not throw).
+    expect(exec.isRegistered('never-registered')).toBe(false);
   });
 
   it('R-EXEC-03: empty() yields handler-free executor', () => {
