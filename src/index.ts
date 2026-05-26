@@ -5,3 +5,4 @@ export * from './store.js';
 export * from './store-sqlite.js';
 export * from './task.js';
 export * from './handlers/index.js';
+export * from './copilot/index.js';

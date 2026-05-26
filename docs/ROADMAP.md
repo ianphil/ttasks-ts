@@ -13,8 +13,8 @@ then commit.
 - Repository: <https://github.com/ianphil/ttasks-ts>
 - Package manager: `pnpm`
 - Compatibility docs: complete
-- Implementation: Phase 7 complete (durable SQLite store via `node:sqlite` with versioned schema, atomic graph save, opt-in destructive migration)
-- Recommended next phase: **Phase 8 — Copilot / agent integration**
+- Implementation: Phase 8 complete (Copilot integration: provider abstraction, `makeCopilotPromptHandler`/`makeCopilotAgentHandler`, `CopilotAgentSession`, `StubCopilotProvider` for tests)
+- All phases complete. No further phases planned.
 
 ## Daily resume checklist
 
@@ -495,15 +495,7 @@ git commit -m "Implement durable store (R-STORE-13..24)"
 
 ### Phase 8 — Copilot / agent integration
 
-Status: **not started**
-
-Implement:
-
-- `makeCopilotPromptHandler`
-- `makeCopilotAgentHandler`
-- `CopilotAgentSession`
-- provider abstraction/fake provider for tests
-- optional real provider integration
+Status: **done**
 
 Rule coverage:
 
