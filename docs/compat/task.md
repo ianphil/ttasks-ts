@@ -283,6 +283,33 @@ default because it may be large or sensitive.
 **Reference test:**
 - `tests/test_task.py::test_repr_includes_identity_title_and_status`
 
+### R-TASK-16 — TaskResult identity across execute / submit / task.result
+
+**Level:** MUST
+
+For a given task attempt that produces a `TaskResult`, the following
+MUST all refer to the **same** object (`===` / `is`):
+
+- the value returned synchronously by `executor.execute(task)`,
+- the value resolved by the future-like returned from
+  `executor.submit(task)`,
+- the value attached at `task.result` once the terminal event has been
+  emitted.
+
+Implementations MUST NOT silently copy, freeze-clone, or re-wrap the
+`TaskResult` between attachment and surfacing. Callers rely on this
+identity to correlate the result delivered to them with the result
+observable on the task and through any persistence path.
+
+A subsequent attempt (retry, or another `execute` after the task has
+been reset to `PENDING`) produces a *new* `TaskResult` object that
+replaces the prior attachment (per R-SM-03). Identity holds within an
+attempt, not across attempts.
+
+**Reference test:**
+- `tests/test_e2e.py::test_live_bash_submit_executes_real_subprocess`
+  (`task.result is future.result(...)`)
+
 ## Scenarios
 
 ### S-TASK-01 — Constructing a bash task

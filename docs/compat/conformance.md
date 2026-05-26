@@ -55,6 +55,7 @@ documents, not by hand-asserting against this index.
 | R-TASK-13  | MUST   | TaskResult is immutable                                       |       |
 | R-TASK-14  | MUST   | TaskResult normalization                                      |       |
 | R-TASK-15  | SHOULD | Repr / display is identity-first                              |       |
+| R-TASK-16  | MUST   | TaskResult identity across execute / submit / task.result     |       |
 
 ### Events (`events.md`)
 
@@ -76,6 +77,7 @@ documents, not by hand-asserting against this index.
 | R-EVT-14   | MUST   | OUTPUT carries stream and chunk                               |       |
 | R-EVT-15   | MUST   | PROGRESS carries percent and/or message                       |       |
 | R-EVT-16   | MUST   | Bus collects subscriber errors                                |       |
+| R-EVT-17   | MUST   | Dependency-order exception for BLOCKED children               |       |
 
 ### Executor (`executor.md`)
 

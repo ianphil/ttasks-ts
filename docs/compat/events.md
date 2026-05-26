@@ -338,6 +338,39 @@ observable.
 - Exercised by every subscriber-isolation test that later asserts the
   bus's `errors` view is non-empty.
 
+### R-EVT-17 — Dependency-order exception for BLOCKED children
+
+**Level:** MUST
+
+For any dependency edge `u -> v` where both `u` and `v` reach a
+terminal status during the same run:
+
+- If `v` is *not* `BLOCKED`, the terminal event for `u` MUST be emitted
+  before the terminal event for `v`. This is the normal
+  parent-before-child ordering guarantee that callers rely on for
+  cascading observers.
+- If `v` *is* `BLOCKED`, the terminal event for `v` MAY be emitted
+  *before* the terminal event for some of `v`'s other parents. The
+  scheduler emits `BLOCKED` as soon as **any one** parent has become
+  bad and unrecoverable; siblings of that parent that were running
+  concurrently MAY still complete (succeed or fail) after `v` is
+  already terminal.
+
+This is the single deliberate relaxation of dependency-order. It
+follows from R-GRAPH-16: blocking propagates eagerly, not lazily.
+Observers that want to count "all parents have terminated" MUST NOT
+assume that a child's terminal event implies anything about siblings
+of the triggering parent.
+
+The ordering guarantee between the *triggering* parent and the
+`BLOCKED` child is preserved: the parent whose terminal status caused
+the block (the one recorded as `task.blockedBy`) MUST have its
+terminal event emitted before the child's `BLOCKED` event.
+
+**Reference test:**
+- `tests/test_e2e.py::test_transition_zoo` (the dependency-ordering
+  loop explicitly skips `BLOCKED` children)
+
 ## Scenarios
 
 ### S-EVT-01 — Happy path event sequence
