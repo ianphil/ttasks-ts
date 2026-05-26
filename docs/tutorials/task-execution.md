@@ -76,6 +76,34 @@ Custom types persist through stores unchanged (the durable schema treats
 `type` as a free string), so a custom task survives crash + resume the same
 way a built-in does.
 
+### Task metadata
+
+Every task carries a typed `metadata` bag — a `Readonly<Record<string, JsonValue>>`
+for domain attributes that don't belong in `payload` (handler input) or
+`description` (free text). It defaults to `{}`, is deep-frozen on assignment,
+travels through `TaskSnapshot`, and round-trips through `InMemoryStore` and
+`SqliteStore`.
+
+```ts
+const t = Task.custom('webhook', JSON.stringify({ url: 'https://example.com' }), {
+  metadata: {
+    ownerMindId: 'mind-7',
+    scopeKind: 'user',
+    sourceId: 'cron-42',
+    tags: ['scheduled'],
+  },
+});
+
+// Update by re-assigning a new object (deep-frozen in place):
+t.metadata = { ...t.metadata, retries: 1 };
+```
+
+Values must be JSON-shaped: strings, finite numbers, booleans, `null`, plain
+arrays, and plain objects. `undefined`, functions, symbols, bigints, `NaN`,
+`Date` / class instances, and circular refs are rejected with a `TypeError`.
+Once a task reaches `SUCCEEDED`, the setter throws `TaskMutationError` (R-SM-09),
+matching the lifecycle of `title` / `description`.
+
 Handler contract:
 
 - returning a value (or a `Promise` that resolves) means success
