@@ -1,5 +1,5 @@
 import { EventBus, TaskEventType, type TaskEvent } from './events.js';
-import { Task, TaskResult, TaskStatus, type TaskType } from './task.js';
+import { Task, TaskStatus, normalizeTaskResult, type TaskResult, type TaskType } from './task.js';
 
 export class TaskExecutionError extends Error {}
 export class TaskTimeoutError extends TaskExecutionError {}
@@ -25,33 +25,35 @@ export class TaskExecutor {
     this.handlers.set(type, handler);
   }
 
-  public async execute(task: Task, upstream: ReadonlyMap<string, Task> = new Map()): Promise<TaskResult> {
+  public async execute(
+    task: Task,
+    upstream: ReadonlyMap<string, Task> = new Map(),
+  ): Promise<TaskResult> {
     const startedAt = new Date();
-    task.status = TaskStatus.RUNNING;
+    const previousStatus = task.status;
+    task.transitionTo(TaskStatus.RUNNING);
     this.events.emit({
       type: TaskEventType.STARTED,
       task,
       taskId: task.id,
       timestamp: startedAt,
-      previousStatus: TaskStatus.PENDING,
+      previousStatus,
       status: TaskStatus.RUNNING,
     });
 
     const handler = this.handlers.get(task.type);
     if (handler === undefined) {
-      task.status = TaskStatus.FAILED;
       const error = `No handler registered for task type '${task.type}'`;
       const finishedAt = new Date();
-      const result = new TaskResult(
-        task.id,
-        TaskStatus.FAILED,
+      const result = normalizeTaskResult({
+        taskId: task.id,
+        status: TaskStatus.FAILED,
         startedAt,
         finishedAt,
-        finishedAt.getTime() - startedAt.getTime(),
-        undefined,
-        error,
-      );
-      task.result = result;
+        raw: null,
+        terminationReason: 'handler',
+      });
+      task.transitionTo(TaskStatus.FAILED, { error, result });
       this.events.emit({
         type: TaskEventType.FAILED,
         task,
@@ -67,19 +69,14 @@ export class TaskExecutor {
     try {
       const raw = await handler({ task, upstream });
       const finishedAt = new Date();
-      const output = typeof raw === 'string' ? raw : undefined;
-      task.status = TaskStatus.SUCCEEDED;
-      const result = new TaskResult(
-        task.id,
-        TaskStatus.SUCCEEDED,
+      const result = normalizeTaskResult({
+        taskId: task.id,
+        status: TaskStatus.SUCCEEDED,
         startedAt,
         finishedAt,
-        finishedAt.getTime() - startedAt.getTime(),
-        output,
-        undefined,
         raw,
-      );
-      task.result = result;
+      });
+      task.transitionTo(TaskStatus.SUCCEEDED, { result });
       this.events.emit({
         type: TaskEventType.SUCCEEDED,
         task,
@@ -92,19 +89,15 @@ export class TaskExecutor {
     } catch (error) {
       const finishedAt = new Date();
       const message = error instanceof Error ? error.message : String(error);
-      task.status = TaskStatus.FAILED;
-      task.error = message;
-      const result = new TaskResult(
-        task.id,
-        TaskStatus.FAILED,
+      const result = normalizeTaskResult({
+        taskId: task.id,
+        status: TaskStatus.FAILED,
         startedAt,
         finishedAt,
-        finishedAt.getTime() - startedAt.getTime(),
-        undefined,
-        message,
-        undefined,
-      );
-      task.result = result;
+        raw: null,
+        terminationReason: 'handler',
+      });
+      task.transitionTo(TaskStatus.FAILED, { error: message, result });
       this.events.emit({
         type: TaskEventType.FAILED,
         task,

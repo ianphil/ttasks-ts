@@ -13,8 +13,8 @@ then commit.
 - Repository: <https://github.com/ianphil/ttasks-ts>
 - Package manager: `pnpm`
 - Compatibility docs: complete
-- Implementation: scaffold only; real port not started
-- Recommended next phase: **Phase 1 — Task model + state machine**
+- Implementation: Phase 1 complete (task model + state machine)
+- Recommended next phase: **Phase 2 — Event system**
 
 ## Daily resume checklist
 
@@ -137,7 +137,7 @@ pnpm typecheck && pnpm test && pnpm build
 
 ### Phase 1 — Task model + state machine
 
-Status: **not started**
+Status: **done**
 
 Implement:
 

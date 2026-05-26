@@ -20,9 +20,9 @@ export class TaskGraph {
   public async run(executor: TaskExecutor): Promise<this> {
     for (const task of this.tasks) {
       const deps = this.dependencies(task);
-      if (deps.some((dep) => dep.status !== TaskStatus.SUCCEEDED)) {
-        task.status = TaskStatus.BLOCKED;
-        task.blockedBy = deps.find((dep) => dep.status !== TaskStatus.SUCCEEDED)?.id;
+      const blocker = deps.find((dep) => dep.status !== TaskStatus.SUCCEEDED);
+      if (blocker !== undefined) {
+        task.transitionTo(TaskStatus.BLOCKED, { blockedBy: blocker.id });
         continue;
       }
       await executor.execute(task, new Map(deps.map((dep) => [dep.id, dep])));
