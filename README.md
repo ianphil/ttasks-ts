@@ -6,20 +6,18 @@ TypeScript port of [`ttasks`](https://github.com/ianphil/ttasks). Built for Node
 
 ## Install
 
-This package is published to the **GitHub Packages** npm registry. Add the following to a project-level `.npmrc` (the registry mapping is required for the `@ianphil` scope, and an authenticated PAT with `read:packages` is required even for public installs):
-
-```ini
-@ianphil:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
-```
-
-Then:
+Anonymous git install — no GitHub token, no registry config:
 
 ```bash
-pnpm add @ianphil/ttasks-ts
+pnpm add github:ianphil/ttasks-ts#v0.1.1
+# or: npm install github:ianphil/ttasks-ts#v0.1.1
+# or: yarn add github:ianphil/ttasks-ts#v0.1.1
 ```
 
-Requires Node.js **≥ 24**.
+The tagged version builds itself on install (via a `prepare` script that
+runs `tsc`). Requires Node.js **≥ 24** on the installing machine.
+
+Pin to a tag — `#main` works but moves with every push.
 
 ## Hello world
 
