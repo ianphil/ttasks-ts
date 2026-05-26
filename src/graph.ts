@@ -180,6 +180,16 @@ export class TaskGraph {
     return this.#order.map((id) => this.#byId.get(id)!.task);
   }
 
+  public get length(): number {
+    return this.#order.length;
+  }
+
+  // Iterating a graph yields its tasks in insertion order, matching the
+  // Python `for t in graph:` ergonomics.
+  public [Symbol.iterator](): IterableIterator<Task> {
+    return this.tasks[Symbol.iterator]();
+  }
+
   public dependencies(task: Task): Task[] {
     return [...(this.#byId.get(task.id)?.deps ?? [])];
   }

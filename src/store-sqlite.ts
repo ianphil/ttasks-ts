@@ -84,8 +84,8 @@ function parseDate(iso: string): Date {
   return new Date(iso);
 }
 
-function serializeResult(result: TaskResult | undefined): string | null {
-  if (result === undefined) return null;
+function serializeResult(result: TaskResult | null | undefined): string | null {
+  if (result == null) return null;
   return JSON.stringify({
     taskId: result.taskId,
     status: result.status,
@@ -111,8 +111,8 @@ interface SerializedResult {
   terminationReason: TerminationReason;
 }
 
-function deserializeResult(json: string | null): TaskResult | undefined {
-  if (json === null) return undefined;
+function deserializeResult(json: string | null): TaskResult | null {
+  if (json === null) return null;
   const r = JSON.parse(json) as SerializedResult;
   // R-STORE-14: raw MAY be dropped on roundtrip; reconstruct as null.
   return new TaskResult({

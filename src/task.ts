@@ -164,7 +164,7 @@ export interface TaskSnapshot {
   status: TaskStatus;
   error?: string;
   blockedBy?: string;
-  result?: TaskResult;
+  result?: TaskResult | null;
 }
 
 const ALLOWED_TRANSITIONS: Readonly<Record<TaskStatus, ReadonlySet<TaskStatus>>> = {
@@ -242,7 +242,7 @@ export class Task {
 
   #status: TaskStatus = TaskStatus.PENDING;
   #error: string | undefined;
-  #result: TaskResult | undefined;
+  #result: TaskResult | null = null;
   #blockedBy: string | undefined;
 
   public constructor(type: TaskType, payload: string, init: TaskInit = {}) {
@@ -329,7 +329,7 @@ export class Task {
     return this.#status;
   }
 
-  public get result(): TaskResult | undefined {
+  public get result(): TaskResult | null {
     return this.#result;
   }
 
@@ -387,7 +387,7 @@ export class Task {
     switch (target) {
       case TaskStatus.RUNNING:
         // R-SM-03: clear prior-run carryover.
-        this.#result = undefined;
+        this.#result = null;
         this.#blockedBy = undefined;
         this.#error = undefined;
         break;
@@ -460,7 +460,7 @@ export class Task {
     t.#status = snapshot.status;
     t.#error = snapshot.error;
     t.#blockedBy = snapshot.blockedBy;
-    t.#result = snapshot.result;
+    t.#result = snapshot.result ?? null;
     return t;
   }
 

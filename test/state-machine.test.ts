@@ -110,7 +110,7 @@ describe('State machine (R-SM-01..11)', () => {
     expect(t.error).toBe('boom');
 
     t.transitionTo(TaskStatus.RUNNING);
-    expect(t.result).toBeUndefined();
+    expect(t.result).toBeNull();
     expect(t.error).toBeUndefined();
   });
 

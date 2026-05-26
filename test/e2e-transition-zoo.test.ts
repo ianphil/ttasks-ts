@@ -185,7 +185,7 @@ describe('e2e — transition zoo', () => {
     );
     for (const label of EXPECTED_BLOCKED_LABELS) {
       expect(startedIds.has(t[label].id)).toBe(false);
-      expect(t[label].result).toBeUndefined();
+      expect(t[label].result).toBeNull();
     }
 
     // 5. Every task got exactly one terminal event (including BLOCKED).
@@ -203,7 +203,7 @@ describe('e2e — transition zoo', () => {
     //    v is not BLOCKED, u's terminal event precedes v's. BLOCKED is emitted
     //    as soon as one parent fails, so its other parents may legitimately
     //    terminate later.
-    for (const v of g.tasks) {
+    for (const v of g) {
       const tv = terminals.get(v.id);
       if (!tv) continue;
       if (v.status === TaskStatus.BLOCKED) continue;
@@ -215,12 +215,12 @@ describe('e2e — transition zoo', () => {
     }
 
     // 7. terminationReason distinguishes B (non-zero exit) from L (timeout).
-    expect(t.B.result).toBeDefined();
+    expect(t.B.result).not.toBeNull();
     expect(t.B.result!.terminationReason).toBe('exit_code');
-    expect(t.L.result).toBeDefined();
+    expect(t.L.result).not.toBeNull();
     expect(t.L.result!.terminationReason).toBe('timeout');
     // SUCCEEDED tasks carry no terminationReason.
-    expect(t.A.result).toBeDefined();
+    expect(t.A.result).not.toBeNull();
     expect(t.A.result!.terminationReason).toBeNull();
   });
 });
@@ -268,11 +268,11 @@ describe('e2e — transition zoo persistence', () => {
 
         // Result presence parity (blocked tasks have no result).
         expect(
-          persisted!.result === undefined,
+          persisted!.result === null,
           `${label} result-presence differs`,
-        ).toBe(task.result === undefined);
+        ).toBe(task.result === null);
 
-        if (task.result !== undefined && persisted!.result !== undefined) {
+        if (task.result !== null && persisted!.result !== null) {
           expect(persisted!.result.output).toBe(task.result.output);
           expect(persisted!.result.error).toBe(task.result.error);
           expect(persisted!.result.terminationReason).toBe(
