@@ -153,7 +153,32 @@ documents, not by hand-asserting against this index.
 
 ### Store (`store.md`)
 
-_Pending._
+| ID          | Level         | Summary                                                  | Notes |
+| ----------- | ------------- | -------------------------------------------------------- | ----- |
+| R-STORE-01  | MUST          | Store exposes `tasks` and `graphs`                       |       |
+| R-STORE-02  | SHOULD        | Protocol conformance is structural                       |       |
+| R-STORE-03  | MUST          | `save` writes under the object's id                      |       |
+| R-STORE-04  | MUST          | Explicit-id setitem requires id match                    |       |
+| R-STORE-05  | MUST          | Setitem validates type                                   |       |
+| R-STORE-06  | MUST          | Missing key raises the structured "missing" error        |       |
+| R-STORE-07  | IMPL-DEFINED  | TypeScript "missing key" representation                  |       |
+| R-STORE-08  | MUST          | `has` accepts both id and object                         |       |
+| R-STORE-09  | MUST          | `delete` removes the record                              |       |
+| R-STORE-10  | MUST          | Iteration order is stable                                |       |
+| R-STORE-11  | MUST          | In-memory collections hold live references               |       |
+| R-STORE-12  | SHOULD        | In-memory cancel helper                                  |       |
+| R-STORE-13  | MUST          | Durable reads return detached snapshots                  |       |
+| R-STORE-14  | MUST          | Full task roundtrip                                      |       |
+| R-STORE-15  | MUST          | Full graph roundtrip                                     |       |
+| R-STORE-16  | MUST          | Graph save is atomic with member-task save               |       |
+| R-STORE-17  | MUST          | Durable backends survive process restart                 |       |
+| R-STORE-18  | MUST          | Schema is versioned                                      |       |
+| R-STORE-19  | MUST          | Fresh empty storage is accepted                          |       |
+| R-STORE-20  | MUST          | Version mismatch refuses to touch data                   |       |
+| R-STORE-21  | MUST          | Destructive migration is explicit and noisy              |       |
+| R-STORE-22  | MUST          | Concurrent writes from the executor are safe             |       |
+| R-STORE-23  | MUST          | Store errors surface through the executor, not lifecycle |       |
+| R-STORE-24  | MUST          | Graph run persists at start and end                      |       |
 
 ### Copilot (`copilot.md`)
 
