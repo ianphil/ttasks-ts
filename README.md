@@ -63,6 +63,15 @@ await session.close();
 
 Ship your own `CopilotProvider`; a `StubCopilotProvider` is included for tests.
 
+## Documentation
+
+- [Docs landing](./docs/index.md) — quickstart, tutorials, patterns, API reference
+- [`docs/quickstart.md`](./docs/quickstart.md) — run a task and a graph
+- [`docs/tutorials/`](./docs/tutorials/) — task execution, graph workflows, Copilot
+- [`docs/patterns/`](./docs/patterns/) — finally tasks, progress/output, retries/cancellation
+- [`docs/compat/`](./docs/compat/) — rule-level behavioral spec (authoritative)
+- API reference: `pnpm docs` (TypeDoc → `docs/api/`)
+
 ## Development
 
 ```bash
@@ -70,6 +79,7 @@ pnpm install
 pnpm typecheck
 pnpm test       # 247 tests
 pnpm build
+pnpm docs       # generate API reference
 ```
 
 ## Status

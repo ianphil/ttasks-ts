@@ -1,0 +1,15 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["src/index.ts"],
+  "out": "docs/api",
+  "tsconfig": "tsconfig.build.json",
+  "readme": "README.md",
+  "name": "ttasks-ts",
+  "includeVersion": true,
+  "excludePrivate": true,
+  "excludeInternal": true,
+  "navigationLinks": {
+    "GitHub": "https://github.com/ianphil/ttasks-ts",
+    "Docs": "https://github.com/ianphil/ttasks-ts/tree/main/docs"
+  }
+}
