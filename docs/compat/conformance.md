@@ -58,7 +58,24 @@ documents, not by hand-asserting against this index.
 
 ### Events (`events.md`)
 
-_Pending._
+| ID         | Level  | Summary                                                       | Notes |
+| ---------- | ------ | ------------------------------------------------------------- | ----- |
+| R-EVT-01   | MUST   | Event types are exhaustive                                    |       |
+| R-EVT-02   | MUST   | Status-changing events fire after the transition is applied  |       |
+| R-EVT-03   | MUST   | Terminal result attached before terminal event                |       |
+| R-EVT-04   | MUST   | STARTED precedes streaming precedes terminal                  |       |
+| R-EVT-05   | MUST   | Never-ran terminals skip STARTED                              |       |
+| R-EVT-06   | MUST   | Retries are independent attempts                              |       |
+| R-EVT-07   | MUST   | Subscriber isolation                                          |       |
+| R-EVT-08   | MUST   | Subscription returns idempotent unsubscribe                   |       |
+| R-EVT-09   | SHOULD | Scoped subscription helper                                    |       |
+| R-EVT-10   | SHOULD | Subscriber rejection of non-callables                         |       |
+| R-EVT-11   | MUST   | Events are immutable                                          |       |
+| R-EVT-12   | MUST   | `previousStatus` is correct                                   |       |
+| R-EVT-13   | MUST   | Persistence failures surface as events, not exceptions        |       |
+| R-EVT-14   | MUST   | OUTPUT carries stream and chunk                               |       |
+| R-EVT-15   | MUST   | PROGRESS carries percent and/or message                       |       |
+| R-EVT-16   | MUST   | Bus collects subscriber errors                                |       |
 
 ### Executor (`executor.md`)
 
