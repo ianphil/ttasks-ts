@@ -213,6 +213,11 @@ export interface PersistenceError {
   readonly error: Error;
 }
 
+export interface GraphPersistenceError {
+  readonly graphId: string;
+  readonly error: Error;
+}
+
 export interface TaskExecutorOptions {
   store?: Store;
 }
@@ -241,6 +246,7 @@ export class TaskExecutor {
   readonly #running = new Map<string, RunState>();
   readonly #inflight = new Map<string, Promise<unknown>>();
   readonly #persistenceErrors: PersistenceError[] = [];
+  readonly #graphPersistenceErrors: GraphPersistenceError[] = [];
   #shutdown = false;
 
   public constructor(options: TaskExecutorOptions = {}) {
@@ -258,6 +264,15 @@ export class TaskExecutor {
 
   public get persistenceErrors(): readonly PersistenceError[] {
     return [...this.#persistenceErrors];
+  }
+
+  public get graphPersistenceErrors(): readonly GraphPersistenceError[] {
+    return [...this.#graphPersistenceErrors];
+  }
+
+  // R-GRAPH-28: invoked by TaskGraph when graph save fails.
+  public recordGraphPersistenceError(graphId: string, error: Error): void {
+    this.#graphPersistenceErrors.push({ graphId, error });
   }
 
   public isRunning(taskId: string): boolean {

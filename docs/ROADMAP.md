@@ -13,8 +13,8 @@ then commit.
 - Repository: <https://github.com/ianphil/ttasks-ts>
 - Package manager: `pnpm`
 - Compatibility docs: complete
-- Implementation: Phase 4 complete (in-memory store collections)
-- Recommended next phase: **Phase 5 — Graph scheduler**
+- Implementation: Phase 5 complete (graph scheduler with cycle detection, bounded concurrency, finally tasks, and persistence)
+- Recommended next phase: **Phase 6 — Subprocess handlers (BASH / POWERSHELL)**
 
 ## Daily resume checklist
 
@@ -342,7 +342,7 @@ git commit -m "Implement in-memory store (R-STORE-01..12)"
 
 ### Phase 5 — Graph scheduler
 
-Status: **not started**
+Status: **done**
 
 Implement:
 
