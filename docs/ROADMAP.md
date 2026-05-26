@@ -240,7 +240,7 @@ git commit -m "Implement event bus (R-EVT-01..17)"
 
 ### Phase 3 — Executor core, no subprocess yet
 
-Status: **not started**
+Status: **done**
 
 Implement:
 
@@ -299,7 +299,7 @@ git commit -m "Implement executor core (R-EXEC-01..27, R-EXEC-32..34)"
 
 ### Phase 4 — In-memory store
 
-Status: **not started**
+Status: **done**
 
 Implement:
 
