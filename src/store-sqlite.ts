@@ -16,11 +16,12 @@ import {
   TaskResult,
   TaskStatus,
   TaskType,
+  type TaskMetadata,
   type TaskSnapshot,
   type TerminationReason,
 } from './task.js';
 
-const SCHEMA_VERSION = 1;
+const SCHEMA_VERSION = 2;
 
 /** @category Errors */
 export class StoreSchemaMismatchError extends Error {
@@ -55,6 +56,7 @@ interface TaskRow {
   error: string | null;
   blocked_by: string | null;
   result_json: string | null;
+  metadata_json: string;
 }
 
 interface GraphRow {
@@ -142,6 +144,7 @@ function rowToTask(row: TaskRow): Task {
     error: row.error ?? undefined,
     blockedBy: row.blocked_by ?? undefined,
     result: deserializeResult(row.result_json),
+    metadata: JSON.parse(row.metadata_json) as TaskMetadata,
   };
   return Task.restore(snapshot);
 }
@@ -163,6 +166,7 @@ CREATE TABLE IF NOT EXISTS tasks (
   error TEXT,
   blocked_by TEXT,
   result_json TEXT,
+  metadata_json TEXT NOT NULL DEFAULT '{}',
   insert_order INTEGER NOT NULL
 );
 CREATE TABLE IF NOT EXISTS graphs (
@@ -222,8 +226,8 @@ function prepareStatements(db: DatabaseSync): PreparedStatements {
     selectTask: db.prepare('SELECT * FROM tasks WHERE id = ?'),
     insertTask: db.prepare(
       `INSERT INTO tasks
-       (id, type, title, description, payload, timeout, created_at, status, error, blocked_by, result_json, insert_order)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       (id, type, title, description, payload, timeout, created_at, status, error, blocked_by, result_json, metadata_json, insert_order)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
        ON CONFLICT(id) DO UPDATE SET
          type=excluded.type,
          title=excluded.title,
@@ -234,7 +238,8 @@ function prepareStatements(db: DatabaseSync): PreparedStatements {
          status=excluded.status,
          error=excluded.error,
          blocked_by=excluded.blocked_by,
-         result_json=excluded.result_json`,
+         result_json=excluded.result_json,
+         metadata_json=excluded.metadata_json`,
     ),
     deleteTask: db.prepare('DELETE FROM tasks WHERE id = ?'),
     hasTask: db.prepare('SELECT 1 FROM tasks WHERE id = ?'),
@@ -328,6 +333,7 @@ class SqliteTaskCollection implements TaskStore {
       task.error ?? null,
       task.blockedBy ?? null,
       serializeResult(task.result),
+      JSON.stringify(task.metadata),
       order ?? next.n,
     );
   }

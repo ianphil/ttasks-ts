@@ -1,6 +1,6 @@
 {
   "name": "@ianphil/ttasks-ts",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "TypeScript port of ttasks",
   "license": "MIT",
   "type": "module",

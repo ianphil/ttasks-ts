@@ -171,6 +171,7 @@ export interface TaskInit {
   timeout?: number;
   id?: string;
   createdAt?: Date;
+  metadata?: TaskMetadata;
 }
 
 // R-STORE-14: restore snapshot shape used by durable stores.
@@ -187,6 +188,11 @@ export interface TaskSnapshot {
   error?: string;
   blockedBy?: string;
   result?: TaskResult | null;
+  /**
+   * Optional on the snapshot shape (older snapshots may lack it; `Task.restore`
+   * defaults to `{}`). On a live `Task` instance, `metadata` is always present.
+   */
+  metadata?: TaskMetadata;
 }
 
 const ALLOWED_TRANSITIONS: Readonly<Record<TaskStatus, ReadonlySet<TaskStatus>>> = {
@@ -251,6 +257,105 @@ function validateTimeout(timeout: number | undefined): void {
   }
 }
 
+/**
+ * Recursive JSON value type for `Task.metadata`. Matches the subset of values
+ * that `JSON.stringify` round-trips losslessly.
+ *
+ * @category Tasks
+ */
+export type JsonValue =
+  | string
+  | number
+  | boolean
+  | null
+  | JsonValue[]
+  | { [key: string]: JsonValue };
+
+/**
+ * Consumer-owned key/value bag attached to a Task. Always present (defaults
+ * to `{}`), deeply frozen, mutable-until-`SUCCEEDED`. Use this for domain
+ * attributes that don't belong in `payload` (handler input) or `description`
+ * (free text) — e.g. `ownerId`, `sourceId`, `scope`. Handlers MAY read it
+ * but MUST NOT depend on specific keys.
+ *
+ * @category Tasks
+ */
+export type TaskMetadata = Readonly<Record<string, JsonValue>>;
+
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  if (typeof value !== 'object' || value === null) return false;
+  if (Array.isArray(value)) return false;
+  const proto = Object.getPrototypeOf(value);
+  return proto === Object.prototype || proto === null;
+}
+
+/**
+ * Recursively validate that `value` is a pure JSON value. Throws TypeError
+ * on undefined, function, symbol, bigint, NaN, +/-Infinity, non-plain
+ * objects (Date, class instances, Maps), and circular structures.
+ */
+function assertJsonValue(value: unknown, path: string, seen: WeakSet<object>): void {
+  if (value === null) return;
+  const t = typeof value;
+  if (t === 'string' || t === 'boolean') return;
+  if (t === 'number') {
+    if (!Number.isFinite(value as number)) {
+      throw new TypeError(`metadata${path}: ${String(value)} is not a finite number`);
+    }
+    return;
+  }
+  if (t === 'undefined' || t === 'function' || t === 'symbol' || t === 'bigint') {
+    throw new TypeError(`metadata${path}: ${t} is not a valid JSON value`);
+  }
+  if (typeof value === 'object') {
+    if (seen.has(value as object)) {
+      throw new TypeError(`metadata${path}: circular reference`);
+    }
+    seen.add(value as object);
+    if (Array.isArray(value)) {
+      for (let i = 0; i < value.length; i++) {
+        assertJsonValue(value[i], `${path}[${String(i)}]`, seen);
+      }
+      return;
+    }
+    if (!isPlainObject(value)) {
+      throw new TypeError(`metadata${path}: not a plain object`);
+    }
+    for (const [k, v] of Object.entries(value)) {
+      assertJsonValue(v, `${path}.${k}`, seen);
+    }
+    return;
+  }
+  throw new TypeError(`metadata${path}: unknown value type ${t}`);
+}
+
+/**
+ * Validate, deep-clone-via-JSON-stringify-equivalent walk, and deep-freeze.
+ * We freeze the consumer's tree in place (no clone) — same semantics as
+ * `title`/`description`: once you hand it to the task, treat it as owned.
+ */
+function freezeMetadata(value: TaskMetadata): TaskMetadata {
+  if (!isPlainObject(value)) {
+    throw new TypeError(`metadata must be a plain object, got ${String(value)}`);
+  }
+  assertJsonValue(value, '', new WeakSet());
+  deepFreeze(value);
+  return value;
+}
+
+function deepFreeze(value: unknown): void {
+  if (value === null || typeof value !== 'object') return;
+  if (Object.isFrozen(value)) return;
+  Object.freeze(value);
+  if (Array.isArray(value)) {
+    for (const item of value) deepFreeze(item);
+  } else {
+    for (const v of Object.values(value as Record<string, unknown>)) deepFreeze(v);
+  }
+}
+
+const EMPTY_METADATA: TaskMetadata = Object.freeze({});
+
 /** @category Tasks */
 export class Task {
   readonly #id: string;
@@ -261,6 +366,7 @@ export class Task {
   #description: string;
   #payload: string;
   #timeout: number | undefined;
+  #metadata: TaskMetadata = EMPTY_METADATA;
 
   #status: TaskStatus = TaskStatus.PENDING;
   #error: string | undefined;
@@ -279,6 +385,9 @@ export class Task {
     this.#description = init.description ?? '';
     this.#payload = payload;
     this.#timeout = init.timeout;
+    if (init.metadata !== undefined) {
+      this.#metadata = freezeMetadata(init.metadata);
+    }
   }
 
   // --- Identity / immutable fields -----------------------------------------
@@ -341,6 +450,15 @@ export class Task {
   public set error(value: string | undefined) {
     this.#assertEditable('error');
     this.#error = value;
+  }
+
+  public get metadata(): TaskMetadata {
+    return this.#metadata;
+  }
+
+  public set metadata(value: TaskMetadata) {
+    this.#assertEditable('metadata');
+    this.#metadata = freezeMetadata(value);
   }
 
   // --- State-machine-managed fields (read-only externally) -----------------
@@ -487,6 +605,7 @@ export class Task {
       description: snapshot.description,
       timeout: snapshot.timeout,
       createdAt: snapshot.createdAt,
+      metadata: snapshot.metadata,
     });
     t.#status = snapshot.status;
     t.#error = snapshot.error;
