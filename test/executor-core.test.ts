@@ -451,7 +451,7 @@ describe('TaskExecutor — persistence', () => {
   });
 
   it('R-EXEC-33: store failure does not derail execution', async () => {
-    const failingStore: Store = {
+    const failingStore = {
       tasks: {
         save: () => {
           throw new Error('disk full');
@@ -466,7 +466,7 @@ describe('TaskExecutor — persistence', () => {
         has: () => false,
         delete: () => undefined,
       },
-    };
+    } as unknown as Store;
     const exec = new TaskExecutor({ store: failingStore });
     exec.register(TaskType.BASH, () => 'ok');
     const events = record(exec);

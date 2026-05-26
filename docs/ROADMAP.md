@@ -13,8 +13,8 @@ then commit.
 - Repository: <https://github.com/ianphil/ttasks-ts>
 - Package manager: `pnpm`
 - Compatibility docs: complete
-- Implementation: Phase 3 complete (executor core, retries, cancel, submit, shutdown, persistence)
-- Recommended next phase: **Phase 4 — Persistence (full store + dehydrate/rehydrate)**
+- Implementation: Phase 4 complete (in-memory store collections)
+- Recommended next phase: **Phase 5 — Graph scheduler**
 
 ## Daily resume checklist
 
