@@ -182,7 +182,33 @@ documents, not by hand-asserting against this index.
 
 ### Copilot (`copilot.md`)
 
-_Pending._
+| ID         | Level         | Summary                                                  | Notes |
+| ---------- | ------------- | -------------------------------------------------------- | ----- |
+| R-COP-01   | MUST          | `PROMPT` is single-turn and tool-less                    |       |
+| R-COP-02   | MUST          | `AGENT` is single-turn and tool-capable                  |       |
+| R-COP-03   | MUST          | Empty / non-text responses normalize to empty string     |       |
+| R-COP-04   | MUST          | Provider errors map to task failure                      |       |
+| R-COP-05   | MUST          | Factory validation                                       |       |
+| R-COP-06   | IMPL-DEFINED  | Default models and timeouts                              |       |
+| R-COP-07   | MUST          | Task timeout overrides factory default                   |       |
+| R-COP-08   | MUST          | Model is overridable per handler                         |       |
+| R-COP-09   | MUST          | Cancellation checked before, during, and after           |       |
+| R-COP-10   | MUST          | Session construction validation                          |       |
+| R-COP-11   | MUST          | Single-active lifecycle                                  |       |
+| R-COP-12   | MUST          | Sync entry runs an isolated event loop                   | May be N/A in async-only TS port |
+| R-COP-13   | MUST          | Enter failure cleans up                                  |       |
+| R-COP-14   | MUST          | Exit closes session then client                          |       |
+| R-COP-15   | MUST          | `sendAndWait` validation and dispatch                    |       |
+| R-COP-16   | MUST          | Turns are serialized                                     |       |
+| R-COP-17   | MUST          | Session preserves conversation state across turns        |       |
+| R-COP-18   | MUST          | `handler()` requires sync-active context                 | May be N/A in async-only TS port |
+| R-COP-19   | MUST          | Handler is a normal AGENT handler                        |       |
+| R-COP-20   | MUST          | Handler cancellation aborts the active turn              |       |
+| R-COP-21   | MUST          | `on(handler)` subscribes and returns unsubscribe         |       |
+| R-COP-22   | MUST          | Subscriber errors are isolated                           |       |
+| R-COP-23   | IMPL-DEFINED  | Copilot integration is `IMPL-DEFINED` in provider        |       |
+| R-COP-24   | IMPL-DEFINED  | Permission handling is `IMPL-DEFINED` but documented     |       |
+| R-COP-25   | MAY           | Copilot integration is optional                          |       |
 
 ## Reserved id prefixes
 
