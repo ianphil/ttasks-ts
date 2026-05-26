@@ -38,7 +38,23 @@ documents, not by hand-asserting against this index.
 
 ### Task (`task.md`)
 
-_Pending._
+| ID         | Level  | Summary                                                       | Notes |
+| ---------- | ------ | ------------------------------------------------------------- | ----- |
+| R-TASK-01  | MUST   | Task type is required and constrained                         |       |
+| R-TASK-02  | MUST   | Timeout, if present, is positive                              |       |
+| R-TASK-03  | MUST   | Timeout defaults to unbounded                                 |       |
+| R-TASK-04  | MUST   | Title and description default to empty                        |       |
+| R-TASK-05  | MUST   | Each task gets a fresh identity                               |       |
+| R-TASK-06  | MUST   | Identity equality and membership                              |       |
+| R-TASK-07  | MUST   | Status is read-only externally                                |       |
+| R-TASK-08  | MUST   | Result and blockedBy are read-only externally                 |       |
+| R-TASK-09  | MUST   | Non-SUCCEEDED tasks remain editable for retry                 |       |
+| R-TASK-10  | MUST   | Built-in task type set                                        |       |
+| R-TASK-11  | SHOULD | Type-specific factory constructors                            |       |
+| R-TASK-12  | MUST   | Result attached on every non-BLOCKED terminal transition      |       |
+| R-TASK-13  | MUST   | TaskResult is immutable                                       |       |
+| R-TASK-14  | MUST   | TaskResult normalization                                      |       |
+| R-TASK-15  | SHOULD | Repr / display is identity-first                              |       |
 
 ### Events (`events.md`)
 
