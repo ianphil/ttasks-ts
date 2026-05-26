@@ -35,6 +35,14 @@ What the contract guarantees is the *task-level* surface: how
 how cancellation flows, how multi-call sessions serialize and abort,
 and how the session integrates with the rest of the system.
 
+## Important
+
+Copilot-SDK source can be found at one of these locations depending on machine:
+~/src/copilot-sdk
+c:\src\copilot-sdk
+
+Use the sdk source for reference
+
 ## Data shape
 
 ### Task type semantics
