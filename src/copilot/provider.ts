@@ -3,6 +3,7 @@
 // sends one turn at a time and may be aborted/closed. Concrete provider
 // implementations (Copilot CLI, OpenAI SDK, MCP, etc.) live elsewhere.
 
+/** @category Copilot */
 export interface CopilotSessionCreateOptions {
   model: string;
   // R-COP-01 / R-COP-02: PROMPT runs tools=false, AGENT runs tools=true.
@@ -15,12 +16,14 @@ export interface CopilotSessionCreateOptions {
   onEvent?: (event: unknown) => void;
 }
 
+/** @category Copilot */
 export interface CopilotSendOptions {
   // null / undefined => no ttasks-imposed timeout (R-COP-07).
   timeout?: number | null;
   signal?: AbortSignal;
 }
 
+/** @category Copilot */
 export interface CopilotProviderSession {
   // R-COP-15: returns the raw provider response; extractAssistantText
   // normalizes per R-COP-03.
@@ -29,11 +32,13 @@ export interface CopilotProviderSession {
   close(): Promise<void> | void;
 }
 
+/** @category Copilot */
 export interface CopilotProvider {
   createSession(options: CopilotSessionCreateOptions): Promise<CopilotProviderSession>;
 }
 
 // R-COP-03: anything that isn't an assistant text payload normalizes to "".
+/** @category Copilot */
 export function extractAssistantText(response: unknown): string {
   if (typeof response === 'string') return response;
   if (response === null || response === undefined) return '';
@@ -52,11 +57,13 @@ export function extractAssistantText(response: unknown): string {
 
 // --- Stub provider for tests and unconfigured environments (R-COP-23, R-COP-25) -----
 
+/** @category Copilot */
 export type StubResponder = (
   prompt: string,
   options: CopilotSendOptions,
 ) => unknown | Promise<unknown>;
 
+/** @category Copilot */
 export interface StubCallRecord {
   readonly model: string;
   readonly tools: boolean;
@@ -65,6 +72,7 @@ export interface StubCallRecord {
   readonly hadSignal: boolean;
 }
 
+/** @category Copilot */
 export class StubCopilotProvider implements CopilotProvider {
   public readonly calls: StubCallRecord[] = [];
   public readonly sessionsCreated: StubCopilotSession[] = [];
@@ -85,6 +93,7 @@ export class StubCopilotProvider implements CopilotProvider {
   }
 }
 
+/** @category Copilot */
 export class StubCopilotSession implements CopilotProviderSession {
   public closed = false;
   public aborts = 0;

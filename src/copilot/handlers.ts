@@ -10,10 +10,14 @@ import {
 } from './provider.js';
 
 // IMPL-DEFINED defaults (R-COP-06).
+/** @category Copilot */
 export const DEFAULT_COPILOT_PROMPT_MODEL = 'gpt-5-mini';
+/** @category Copilot */
 export const DEFAULT_COPILOT_PROMPT_TIMEOUT = 60;
+/** @category Copilot */
 export const DEFAULT_COPILOT_AGENT_MODEL = 'gpt-5';
 
+/** @category Copilot */
 export interface CopilotPromptHandlerOptions {
   provider: CopilotProvider;
   model?: string;
@@ -23,6 +27,7 @@ export interface CopilotPromptHandlerOptions {
   sessionOptions?: Readonly<Record<string, unknown>>;
 }
 
+/** @category Copilot */
 export interface CopilotAgentHandlerOptions {
   provider: CopilotProvider;
   model?: string;
@@ -106,6 +111,7 @@ async function sendWithTimeout(
 }
 
 // R-COP-01, R-COP-05..09.
+/** @category Copilot */
 export function makeCopilotPromptHandler(options: CopilotPromptHandlerOptions): TaskHandler {
   const model = options.model ?? DEFAULT_COPILOT_PROMPT_MODEL;
   assertNonEmptyModel(model, 'makeCopilotPromptHandler');
@@ -128,6 +134,7 @@ export function makeCopilotPromptHandler(options: CopilotPromptHandlerOptions): 
 }
 
 // R-COP-02, R-COP-05..09.
+/** @category Copilot */
 export function makeCopilotAgentHandler(options: CopilotAgentHandlerOptions): TaskHandler {
   const model = options.model ?? DEFAULT_COPILOT_AGENT_MODEL;
   assertNonEmptyModel(model, 'makeCopilotAgentHandler');

@@ -12,6 +12,7 @@ import {
 
 // --- Errors -----------------------------------------------------------------
 
+/** @category Errors */
 export class TaskExecutionError extends Error {
   public constructor(message: string) {
     super(message);
@@ -19,6 +20,7 @@ export class TaskExecutionError extends Error {
   }
 }
 
+/** @category Errors */
 export class TaskTimeoutError extends TaskExecutionError {
   public constructor(message = 'Task timed out') {
     super(message);
@@ -26,6 +28,7 @@ export class TaskTimeoutError extends TaskExecutionError {
   }
 }
 
+/** @category Errors */
 export class TaskCancelled extends Error {
   public constructor(message = 'Task cancelled') {
     super(message);
@@ -33,6 +36,7 @@ export class TaskCancelled extends Error {
   }
 }
 
+/** @category Errors */
 export class MissingHandlerError extends TaskExecutionError {
   public constructor(taskType: TaskType) {
     super(`No handler registered for task type '${taskType}'`);
@@ -44,12 +48,14 @@ export class MissingHandlerError extends TaskExecutionError {
 // with a non-zero exit code, times out, or is otherwise unsuccessful. It
 // carries the partial output so the executor can attach a normal TaskResult
 // to the FAILED task.
+/** @category Executor */
 export interface SubprocessCompletion {
   stdout: string;
   stderr: string;
   returncode: number;
 }
 
+/** @category Errors */
 export class SubprocessFailureError extends TaskExecutionError {
   public readonly completion: SubprocessCompletion;
   public readonly terminationReason: 'exit_code' | 'timeout';
@@ -65,6 +71,7 @@ export class SubprocessFailureError extends TaskExecutionError {
   }
 }
 
+/** @category Errors */
 export class ExecutorShutdownError extends Error {
   public constructor(message = 'Executor has been shut down') {
     super(message);
@@ -74,11 +81,13 @@ export class ExecutorShutdownError extends Error {
 
 // --- Retry policy -----------------------------------------------------------
 
+/** @category Executor */
 export interface RetryPolicyInit {
   maxAttempts: number;
   backoff?: number;
 }
 
+/** @category Executor */
 export class RetryPolicy {
   public readonly maxAttempts: number;
   public readonly backoff: number;
@@ -133,6 +142,7 @@ function assertRetryPolicy(value: unknown): asserts value is RetryPolicy {
 
 // --- Task context -----------------------------------------------------------
 
+/** @category Executor */
 export interface TaskContextInit {
   task: Task;
   upstream?: ReadonlyMap<string, Task>;
@@ -142,6 +152,7 @@ export interface TaskContextInit {
   outputEmitter?: (stream: 'stdout' | 'stderr', chunk: string) => void;
 }
 
+/** @category Executor */
 export class TaskContext {
   readonly #task: Task;
   readonly #upstream: ReadonlyMap<string, Task>;
@@ -222,10 +233,12 @@ export class TaskContext {
 
 // --- Handler ----------------------------------------------------------------
 
+/** @category Executor */
 export type TaskHandler = (context: TaskContext) => Promise<unknown> | unknown;
 
 // --- Submitted handle -------------------------------------------------------
 
+/** @category Executor */
 export interface SubmittedTask<T = TaskResult> extends Promise<T> {
   readonly task: Task;
   cancel(): void;
@@ -240,22 +253,26 @@ interface RunState {
   cancelled: boolean;
 }
 
+/** @category Executor */
 export interface ExecuteOptions {
   upstream?: ReadonlyMap<string, Task>;
   retryPolicy?: RetryPolicy;
   signal?: AbortSignal;
 }
 
+/** @category Executor */
 export interface PersistenceError {
   readonly taskId: string;
   readonly error: Error;
 }
 
+/** @category Executor */
 export interface GraphPersistenceError {
   readonly graphId: string;
   readonly error: Error;
 }
 
+/** @category Executor */
 export interface TaskExecutorOptions {
   store?: Store;
 }
@@ -276,6 +293,7 @@ function makeCancelledResult(task: Task, at: Date): TaskResult {
   });
 }
 
+/** @category Executor */
 export class TaskExecutor {
   public readonly events = new EventBus<TaskEvent>();
   public readonly store: Store | undefined;

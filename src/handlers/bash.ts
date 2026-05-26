@@ -2,11 +2,13 @@ import type { TaskHandler } from '../executor.js';
 
 import { runShell, type ShellCompletion } from './subprocess.js';
 
+/** @category Handlers */
 export interface BashHandlerOptions {
   bashPath?: string;
 }
 
 // R-EXEC-28: built-in BASH handler. Invokes `bash -c <payload>`.
+/** @category Handlers */
 export function createBashHandler(options: BashHandlerOptions = {}): TaskHandler {
   const bashPath = options.bashPath ?? 'bash';
   return async (ctx): Promise<ShellCompletion> => {

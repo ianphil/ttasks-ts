@@ -12,6 +12,7 @@ import {
   type CopilotSendOptions,
 } from './provider.js';
 
+/** @category Copilot */
 export interface CopilotAgentSessionOptions {
   provider: CopilotProvider;
   model: string;
@@ -21,8 +22,10 @@ export interface CopilotAgentSessionOptions {
   sessionOptions?: Readonly<Record<string, unknown>>;
 }
 
+/** @category Copilot */
 export type CopilotEventHandler = (event: unknown) => void;
 
+/** @category Copilot */
 export class CopilotAgentSession {
   readonly #provider: CopilotProvider;
   public readonly model: string;

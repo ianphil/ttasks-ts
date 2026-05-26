@@ -5,6 +5,7 @@ import { TaskGraph } from './graph.js';
 // (no throw) as the documented "missing key" surface. `delete` and
 // explicit setItem follow R-STORE-04..09 and throw structured errors.
 
+/** @category Errors */
 export class StoreKeyError extends Error {
   public constructor(message: string) {
     super(message);
@@ -12,6 +13,7 @@ export class StoreKeyError extends Error {
   }
 }
 
+/** @category Errors */
 export class StoreIdMismatchError extends Error {
   public constructor(message: string) {
     super(message);
@@ -21,6 +23,7 @@ export class StoreIdMismatchError extends Error {
 
 // --- Protocols --------------------------------------------------------------
 
+/** @category Stores */
 export interface TaskStore {
   readonly size: number;
   save(task: Task): void | Promise<void>;
@@ -33,6 +36,7 @@ export interface TaskStore {
   [Symbol.iterator](): IterableIterator<string>;
 }
 
+/** @category Stores */
 export interface GraphStore {
   readonly size: number;
   save(graph: TaskGraph): void | Promise<void>;
@@ -45,6 +49,7 @@ export interface GraphStore {
   [Symbol.iterator](): IterableIterator<string>;
 }
 
+/** @category Stores */
 export interface Store {
   tasks: TaskStore;
   graphs: GraphStore;
@@ -52,6 +57,7 @@ export interface Store {
 
 // --- In-memory backend ------------------------------------------------------
 
+/** @category Stores */
 export class InMemoryTaskCollection implements TaskStore {
   // R-STORE-10: JS Map preserves insertion order.
   readonly #items = new Map<string, Task>();
@@ -123,6 +129,7 @@ export class InMemoryTaskCollection implements TaskStore {
   }
 }
 
+/** @category Stores */
 export class InMemoryGraphCollection implements GraphStore {
   readonly #items = new Map<string, TaskGraph>();
 
@@ -179,6 +186,7 @@ export class InMemoryGraphCollection implements GraphStore {
 }
 
 // R-STORE-01
+/** @category Stores */
 export class InMemoryStore implements Store {
   public readonly tasks = new InMemoryTaskCollection();
   public readonly graphs = new InMemoryGraphCollection();

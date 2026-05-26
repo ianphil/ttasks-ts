@@ -9,7 +9,35 @@
   "excludePrivate": true,
   "excludeInternal": true,
   "navigationLinks": {
-    "GitHub": "https://github.com/ianphil/ttasks-ts",
-    "Docs": "https://github.com/ianphil/ttasks-ts/tree/main/docs"
+    "GitHub": "https://github.com/ianphil/ttasks-ts"
+  },
+  "projectDocuments": [
+    "docs/quickstart.md",
+    "docs/tutorials/task-execution.md",
+    "docs/tutorials/graph-workflows.md",
+    "docs/tutorials/copilot.md",
+    "docs/patterns/finally-tasks.md",
+    "docs/patterns/progress-and-output.md",
+    "docs/patterns/retries-and-cancellation.md"
+  ],
+  "categorizeByGroup": false,
+  "defaultCategory": "Other",
+  "categoryOrder": [
+    "Tasks",
+    "Graphs",
+    "Executor",
+    "Handlers",
+    "Stores",
+    "Events",
+    "Copilot",
+    "Errors",
+    "*",
+    "Other"
+  ],
+  "navigation": {
+    "includeCategories": true,
+    "includeGroups": false,
+    "includeFolders": false
   }
 }
+

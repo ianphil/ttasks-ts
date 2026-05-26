@@ -11,6 +11,7 @@ import {
   type TaskContext,
 } from '../executor.js';
 
+/** @category Handlers */
 export interface RunShellOptions {
   command: string;
   args: ReadonlyArray<string>;
@@ -20,12 +21,14 @@ export interface RunShellOptions {
 
 const DEFAULT_KILL_GRACE_MS = 100;
 
+/** @category Handlers */
 export interface ShellCompletion {
   stdout: string;
   stderr: string;
   returncode: number;
 }
 
+/** @category Handlers */
 export async function runShell(options: RunShellOptions): Promise<ShellCompletion> {
   const { command, args, ctx } = options;
   const killGraceMs = options.killGraceMs ?? DEFAULT_KILL_GRACE_MS;

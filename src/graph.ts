@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import type { TaskExecutor } from './executor.js';
 import { Task, TaskStatus } from './task.js';
 
+/** @category Graphs */
 export interface TaskGraphInit {
   id?: string;
   title?: string;
@@ -10,6 +11,7 @@ export interface TaskGraphInit {
 }
 
 // R-STORE-15: snapshot used to reconstruct a graph from a durable store.
+/** @category Graphs */
 export interface TaskGraphSnapshot {
   id: string;
   title: string;
@@ -22,16 +24,19 @@ export interface TaskGraphSnapshot {
   }>;
 }
 
+/** @category Graphs */
 export interface AddOptions {
   after?: Iterable<Task>;
   finally_?: boolean;
   required?: boolean;
 }
 
+/** @category Graphs */
 export interface RunOptions {
   maxWorkers?: number;
 }
 
+/** @category Errors */
 export class GraphValidationError extends Error {
   public constructor(message: string) {
     super(message);
@@ -39,6 +44,7 @@ export class GraphValidationError extends Error {
   }
 }
 
+/** @category Errors */
 export class GraphCycleError extends GraphValidationError {
   public constructor(message: string) {
     super(message);
@@ -46,6 +52,7 @@ export class GraphCycleError extends GraphValidationError {
   }
 }
 
+/** @category Errors */
 export class GraphNoProgressError extends Error {
   public constructor(message: string) {
     super(message);
@@ -62,6 +69,7 @@ interface TaskMeta {
 
 const DEFAULT_MAX_WORKERS = 4;
 
+/** @category Graphs */
 export class TaskGraph {
   public readonly id: string;
   public readonly createdAt: Date;

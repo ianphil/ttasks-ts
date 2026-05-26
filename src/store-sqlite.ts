@@ -22,6 +22,7 @@ import {
 
 const SCHEMA_VERSION = 1;
 
+/** @category Errors */
 export class StoreSchemaMismatchError extends Error {
   public constructor(message: string) {
     super(message);
@@ -29,6 +30,7 @@ export class StoreSchemaMismatchError extends Error {
   }
 }
 
+/** @category Stores */
 export interface SqliteStoreOptions {
   // Path to a sqlite file or ':memory:' for in-process.
   path: string;
@@ -591,6 +593,7 @@ function ensureSchema(
 }
 
 // R-STORE-01, R-STORE-13..24: durable SQLite-backed store.
+/** @category Stores */
 export class SqliteStore implements Store {
   readonly #db: DatabaseSync;
   public readonly tasks: TaskStore;

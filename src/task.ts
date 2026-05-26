@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
+/** @category Tasks */
 export enum TaskStatus {
   PENDING = 'pending',
   RUNNING = 'running',
@@ -9,6 +10,7 @@ export enum TaskStatus {
   BLOCKED = 'blocked',
 }
 
+/** @category Tasks */
 export enum TaskType {
   BASH = 'bash',
   POWERSHELL = 'powershell',
@@ -18,8 +20,10 @@ export enum TaskType {
 
 const VALID_TASK_TYPES: ReadonlySet<string> = new Set(Object.values(TaskType));
 
+/** @category Tasks */
 export type TerminationReason = null | 'exit_code' | 'timeout' | 'cancelled' | 'handler';
 
+/** @category Tasks */
 export interface TaskResultInit {
   taskId: string;
   status: TaskStatus;
@@ -33,6 +37,7 @@ export interface TaskResultInit {
   terminationReason: TerminationReason;
 }
 
+/** @category Tasks */
 export class TaskResult {
   public readonly taskId: string;
   public readonly status: TaskStatus;
@@ -76,6 +81,7 @@ function isSubprocessLike(value: unknown): value is SubprocessLike {
   );
 }
 
+/** @category Tasks */
 export interface NormalizeTaskResultInit {
   taskId: string;
   status: TaskStatus;
@@ -86,6 +92,7 @@ export interface NormalizeTaskResultInit {
 }
 
 // R-TASK-14: normalize a handler's return value into a TaskResult.
+/** @category Tasks */
 export function normalizeTaskResult(init: NormalizeTaskResultInit): TaskResult {
   const duration = init.finishedAt.getTime() - init.startedAt.getTime();
   const terminationReason =
@@ -135,6 +142,7 @@ export function normalizeTaskResult(init: NormalizeTaskResultInit): TaskResult {
   });
 }
 
+/** @category Tasks */
 export interface TaskInit {
   title?: string;
   description?: string;
@@ -144,6 +152,7 @@ export interface TaskInit {
 }
 
 // R-STORE-14: restore snapshot shape used by durable stores.
+/** @category Tasks */
 export interface TaskSnapshot {
   id: string;
   type: TaskType;
@@ -190,6 +199,7 @@ const BAD_STATES: ReadonlySet<TaskStatus> = new Set([
   TaskStatus.BLOCKED,
 ]);
 
+/** @category Errors */
 export class InvalidTransitionError extends Error {
   public constructor(from: TaskStatus, to: TaskStatus) {
     super(`Invalid task transition: ${from} -> ${to}`);
@@ -197,6 +207,7 @@ export class InvalidTransitionError extends Error {
   }
 }
 
+/** @category Errors */
 export class TaskMutationError extends Error {
   public constructor(field: string) {
     super(`Cannot mutate '${field}' on a task that is not editable`);
@@ -204,6 +215,7 @@ export class TaskMutationError extends Error {
   }
 }
 
+/** @category Tasks */
 export interface TransitionOptions {
   result?: TaskResult;
   error?: string;
@@ -217,6 +229,7 @@ function validateTimeout(timeout: number | undefined): void {
   }
 }
 
+/** @category Tasks */
 export class Task {
   readonly #id: string;
   readonly #type: TaskType;

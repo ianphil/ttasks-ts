@@ -1,5 +1,6 @@
 import { TaskStatus, type Task } from './task.js';
 
+/** @category Events */
 export enum TaskEventType {
   STARTED = 'started',
   PROGRESS = 'progress',
@@ -11,9 +12,11 @@ export enum TaskEventType {
   PERSISTENCE_FAILED = 'persistence_failed',
 }
 
+/** @category Events */
 export type OutputStream = 'stdout' | 'stderr';
 
 // R-EVT-11: events are immutable; factories freeze them.
+/** @category Events */
 export interface TaskEvent {
   readonly type: TaskEventType;
   readonly task: Task;
@@ -113,6 +116,7 @@ function validateProgress(init: ProgressInit): void {
   }
 }
 
+/** @category Events */
 export const TaskEvents = {
   started(init: StatusChangeInit): TaskEvent {
     return makeStatusEvent(TaskEventType.STARTED, TaskStatus.RUNNING, init);
@@ -178,8 +182,10 @@ export const TaskEvents = {
   },
 } as const;
 
+/** @category Events */
 export type EventHandler<T> = (event: T) => void;
 
+/** @category Events */
 export class EventBus<T> {
   readonly #subscribers = new Set<EventHandler<T>>();
   readonly #errors: Error[] = [];
