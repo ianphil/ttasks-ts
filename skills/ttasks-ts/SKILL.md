@@ -18,6 +18,7 @@ pnpm add github:ianphil/ttasks-ts#v0.3.0
 
 ```
 Single operation?                         →  executor.execute(task)
+Non-trivial DAG in Chamber?              →  wtd_retrieve_topology before authoring
 Multiple steps with dependencies?         →  TaskGraph + graph.run(executor)
 Cleanup must run even if a step fails?    →  finally_ task in graph
 Results must survive a process crash?     →  SqliteStore
@@ -27,6 +28,47 @@ Domain-specific typed operation?          →  Task.custom('my-type') + exec.reg
 ```
 
 ¹ Agent tasks require a `CopilotProvider` implementation — the library defines the interface; you inject a concrete provider. See [patterns/agent-tasks.md](patterns/agent-tasks.md).
+
+---
+
+## Topology Advice in Chamber
+
+When Chamber exposes `wtd_retrieve_topology`, call it before authoring a
+non-trivial DAG. WTD retrieves proven workflow shapes; it does not generate
+executable task payloads or run the workflow.
+
+Pass the workflow intent, rough steps, or both:
+
+```json
+{
+  "query": "inspect independent failures, fix them in parallel, verify, and publish a summary",
+  "draftDag": {
+    "title": "parallel fixes with verification",
+    "steps": [
+      "Inspect failures",
+      "Fix independent branches",
+      "Run verification",
+      "Publish summary"
+    ]
+  },
+  "k": 5,
+  "mode": "auto"
+}
+```
+
+Use the returned candidates as starting shapes. Adapt task names, payloads,
+dependencies, failure policy, finalizers, and validation to the actual work.
+Then:
+
+1. Write the concrete `.chamber/automation/*.ts` program with
+   `@ianphil/ttasks-ts`.
+2. Run `automation_validate`.
+3. Run `automation_run`.
+4. Call `cron_create` only when the user requested scheduling.
+
+Skip WTD for a one-off task or an obvious short linear sequence where topology
+selection adds no value. Never import WTD or ONNX from the generated automation
+script.
 
 ---
 
